@@ -19,8 +19,15 @@ function ScrollToTop() {
 }
 export default function App() {
  return <><ScrollToTop/><Navbar/><main id="main-content"><Routes>
-  <Route path="/" element={<Home/>}/><Route path="/projects" element={<Projects/>}/><Route path="/projects/:id" element={<ProjectDetail/>}/>
-  <Route path="/studio" element={<Studio/>}/><Route path="/services" element={<Services/>}/><Route path="/journal" element={<Journal/>}/>
-  <Route path="/contact" element={<Contact/>}/><Route path="/privacy" element={<Privacy/>}/><Route path="/terms" element={<Terms/>}/><Route path="*" element={<NotFound/>}/>
+  <Route path="/" element={<Home/>}/>
+  <Route path="/projects" element={<Projects/>}/>
+  <Route path="/projects/:id" element={<ProjectDetail/>}/>
+  <Route path="/studio" element={<Studio/>}/>
+  <Route path="/services" element={<Services/>}/>
+  <Route path="/journal" element={<Journal/>}/>
+  <Route path="/contact" element={<Contact/>}/>
+  <Route path="/privacy" element={<Privacy/>}/>
+  <Route path="/terms" element={<Terms/>}/>
+  <Route path="*" element={<NotFound/>}/>
  </Routes></main><Footer/></>;
 }
