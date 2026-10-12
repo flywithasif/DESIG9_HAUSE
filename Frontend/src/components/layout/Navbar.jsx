@@ -30,7 +30,7 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 border-b border-black/[0.07] bg-[#fbfaf7]/95 backdrop-blur-xl">
       <div className="mx-auto flex min-h-[88px] w-[min(1440px,calc(100%-64px))] items-center justify-between gap-8 max-md:min-h-[76px] max-md:w-[calc(100%-32px)]">
-        {/* BRAND */}
+        {/* BRAND LOGO */}
         <Link
           to="/"
           onClick={close}
@@ -47,7 +47,7 @@ export default function Navbar() {
           </span>
         </Link>
 
-        {/* MOBILE MENU */}
+        {/* MOBILE MENU TOGGLE */}
         <button
           type="button"
           onClick={() => setOpen((value) => !value)}
@@ -58,7 +58,7 @@ export default function Navbar() {
           {open ? <X size={22} /> : <Menu size={22} />}
         </button>
 
-        {/* NAVIGATION */}
+        {/* NAVIGATION LINKS */}
         <nav
           onMouseLeave={() => setHovered(null)}
           className={`${
@@ -96,18 +96,18 @@ export default function Navbar() {
             </NavLink>
           ))}
 
-          {/* PREMIUM CTA */}
+          {/* MAIN RED CTA BUTTON - FREE SITE VISIT */}
           <Link
-            to="/contact"
+            to="/free-site-visit"
             onClick={close}
             onMouseEnter={() => setHovered("cta")}
             onMouseLeave={() => setHovered(null)}
-            className="group relative mt-4 inline-flex min-h-[49px] items-center justify-center gap-5 overflow-hidden border border-[#c51f32] bg-[#c51f32] px-6 text-[12px] font-semibold tracking-[0.035em] text-white transition-[background-color,transform,box-shadow] duration-300 ease-out hover:-translate-y-0.5 hover:bg-[#a71929] hover:shadow-[0_10px_28px_rgba(197,31,50,0.18)] active:translate-y-0 active:scale-[0.98] lg:mt-0 lg:ml-1"
+            className="group relative mt-4 inline-flex min-h-[49px] items-center justify-center gap-4 overflow-hidden border border-[#c51f32] bg-[#c51f32] px-6 text-[12px] font-semibold tracking-[0.035em] text-white transition-[background-color,transform,box-shadow] duration-300 ease-out hover:-translate-y-0.5 hover:bg-[#a71929] hover:shadow-[0_10px_28px_rgba(197,31,50,0.18)] active:translate-y-0 active:scale-[0.98] lg:mt-0 lg:ml-2"
           >
             <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/15 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
 
-            <span className="relative z-10 whitespace-nowrap">
-              Start a project
+            <span className="relative z-10 whitespace-nowrap uppercase tracking-wider text-[11px]">
+              Free Site Visit
             </span>
 
             <ArrowUpRight
@@ -116,6 +116,7 @@ export default function Navbar() {
               className="relative z-10 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1"
             />
           </Link>
+
         </nav>
       </div>
     </header>
