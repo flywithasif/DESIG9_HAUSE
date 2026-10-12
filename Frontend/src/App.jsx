@@ -6,12 +6,14 @@ import Home from "./pages/Home";
 import Projects from "./pages/Projects";
 import ProjectDetail from "./pages/ProjectDetail";
 import Studio from "./pages/Studio";
+import Team from "./pages/Team";
 import Services from "./pages/Services";
 import Journal from "./pages/Journal";
 import Contact from "./pages/Contact";
 import FreeSiteVisit from "./pages/FreeSiteVisit";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
+import About from "./pages/About";
 import NotFound from "./pages/NotFound";
 
 function ScrollToTop() {
@@ -30,9 +32,11 @@ export default function App() {
       <main id="main-content">
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
           <Route path="/projects" element={<Projects />} />
           <Route path="/projects/:id" element={<ProjectDetail />} />
           <Route path="/studio" element={<Studio />} />
+          <Route path="/team" element={<Team />} />
           <Route path="/services" element={<Services />} />
           <Route path="/journal" element={<Journal />} />
           <Route path="/contact" element={<Contact />} />

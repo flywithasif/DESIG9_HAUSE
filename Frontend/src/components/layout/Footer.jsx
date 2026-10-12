@@ -40,6 +40,7 @@ export default function Footer() {
             <h3 className="mb-2 font-semibold tracking-wide text-white">Explore</h3>
             <Link className="text-stone-300 hover:text-white transition-colors" to="/projects">Projects</Link>
             <Link className="text-stone-300 hover:text-white transition-colors" to="/studio">Studio</Link>
+            <Link className="text-stone-300 hover:text-white transition-colors" to="/team">Our Team</Link>
             <Link className="text-stone-300 hover:text-white transition-colors" to="/services">Services</Link>
             <Link className="text-stone-300 hover:text-white transition-colors" to="/journal">Journal</Link>
             <Link className="text-stone-300 hover:text-white transition-colors" to="/free-site-visit">Free Site Visit</Link>

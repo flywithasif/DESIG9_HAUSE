@@ -63,8 +63,9 @@ export default function Navbar() {
           onMouseLeave={() => setHovered(null)}
           className={`${
             open ? "flex" : "hidden"
-          } absolute left-0 right-0 top-full flex-col border-b border-black/10 bg-[#fbfaf7] px-6 pb-6 shadow-xl shadow-black/[0.04] lg:static lg:flex lg:flex-row lg:items-center lg:gap-8 lg:border-0 lg:bg-transparent lg:p-0 lg:shadow-none`}
+          } absolute left-0 right-0 top-full flex-col border-b border-black/10 bg-[#fbfaf7] px-6 pb-6 shadow-xl shadow-black/[0.04] lg:static lg:flex lg:flex-row lg:items-center lg:gap-7 lg:border-0 lg:bg-transparent lg:p-0 lg:shadow-none`}
         >
+          {/* Dynamic Navigation from file */}
           {navigation.map((item, index) => (
             <NavLink
               key={item.path}
@@ -86,15 +87,35 @@ export default function Navbar() {
               className="group relative inline-flex items-center self-start py-4 text-[13px] font-medium tracking-[0.015em] lg:self-auto lg:py-3"
             >
               <span className="relative z-10">{item.label}</span>
-
-              {/* Fine red underline + light sweep */}
               <span className="absolute inset-x-0 bottom-2 h-px origin-left scale-x-0 bg-[#c51f32] transition-transform duration-300 ease-out group-hover:scale-x-100 lg:bottom-1" />
-
-              <span className="pointer-events-none absolute -inset-x-2 inset-y-1 -z-0 overflow-hidden opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                <span className="absolute inset-y-0 w-1/2 -translate-x-[150%] skew-x-[-20deg] bg-gradient-to-r from-transparent via-[#c51f32]/[0.07] to-transparent transition-transform duration-700 group-hover:translate-x-[250%]" />
-              </span>
             </NavLink>
           ))}
+
+          {/* EXPLICITLY ADDED ABOUT US LINK */}
+          <NavLink
+            to="/about"
+            onClick={close}
+            onMouseEnter={() => setHovered("about")}
+            onMouseLeave={() => setHovered(null)}
+            style={({ isActive }) => linkStyle(isActive, hovered === "about", false)}
+            className="group relative inline-flex items-center self-start py-4 text-[13px] font-medium tracking-[0.015em] lg:self-auto lg:py-3"
+          >
+            <span className="relative z-10">About Us</span>
+            <span className="absolute inset-x-0 bottom-2 h-px origin-left scale-x-0 bg-[#c51f32] transition-transform duration-300 ease-out group-hover:scale-x-100 lg:bottom-1" />
+          </NavLink>
+
+          {/* EXPLICITLY ADDED TEAM LINK */}
+          <NavLink
+            to="/team"
+            onClick={close}
+            onMouseEnter={() => setHovered("team")}
+            onMouseLeave={() => setHovered(null)}
+            style={({ isActive }) => linkStyle(isActive, hovered === "team", false)}
+            className="group relative inline-flex items-center self-start py-4 text-[13px] font-medium tracking-[0.015em] lg:self-auto lg:py-3"
+          >
+            <span className="relative z-10">Team</span>
+            <span className="absolute inset-x-0 bottom-2 h-px origin-left scale-x-0 bg-[#c51f32] transition-transform duration-300 ease-out group-hover:scale-x-100 lg:bottom-1" />
+          </NavLink>
 
           {/* MAIN RED CTA BUTTON - FREE SITE VISIT */}
           <Link
