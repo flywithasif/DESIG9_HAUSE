@@ -1,0 +1,5 @@
+﻿import { ArrowUpRight } from "lucide-react";
+import { Link } from "react-router-dom";
+export default function ProjectCard({ project, index = 0 }) {
+  return <article className="group min-w-0"><Link to={`/projects/${project.id}`} className="relative block aspect-[1.28/1] overflow-hidden bg-stone-200" aria-label={`View ${project.title}`}><img src={project.image} alt={project.title} loading={index > 1 ? "lazy" : "eager"} className="size-full object-cover transition duration-700 group-hover:scale-105"/><span className="absolute bottom-4 right-4 grid size-11 place-items-center bg-paper text-ink opacity-0 transition group-hover:opacity-100"><ArrowUpRight size={20}/></span></Link><div className="my-4 flex justify-between gap-3 text-[10px] text-muted"><span>{project.category}</span><span>{project.year}</span></div><h3 className="font-serif text-2xl sm:text-3xl"><Link className="hover:text-olive" to={`/projects/${project.id}`}>{project.title}</Link></h3><p className="mt-2 max-w-xl text-xs text-muted">{project.description}</p></article>;
+}
