@@ -1,17 +1,54 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
+import Lenis from "lenis";
 import {
   Sparkles,
   ArrowRight,
   ShieldCheck,
   HeartHandshake,
   ChevronRight,
-  Building,
   Home as HomeIcon,
 } from "lucide-react";
 
-// Number Counter Sub-component (Browser Native Observer)
-function AnimatedCounter({ from = 1, to, suffix = "", duration = 2 }) {
+// Scroll Reveal Component with 2 Seconds Slow Transition
+function ScrollReveal({ children, className = "", delay = 0 }) {
+  const [isVisible, setIsVisible] = useState(false);
+  const domRef = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (domRef.current) observer.observe(domRef.current);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div
+      ref={domRef}
+      style={{
+        transitionDuration: "2000ms", // 2 Seconds Animation Duration
+        transitionDelay: `${delay}ms`,
+      }}
+      className={`transition-all ease-out transform ${
+        isVisible
+          ? "opacity-100 translate-y-0 scale-100"
+          : "opacity-0 translate-y-24 scale-95 pointer-events-none"
+      } ${className}`}
+    >
+      {children}
+    </div>
+  );
+}
+
+// Number Counter Sub-component
+function AnimatedCounter({ from = 1, to, suffix = "", duration = 2.5 }) {
   const [count, setCount] = useState(from);
   const [isVisible, setIsVisible] = useState(false);
   const counterRef = useRef(null);
@@ -64,12 +101,49 @@ function AnimatedCounter({ from = 1, to, suffix = "", duration = 2 }) {
 }
 
 export default function About() {
-  // 20+ Architectural & Interior Brands List
+  // Initialize Lenis Smooth Scroll
+  useEffect(() => {
+    const lenis = new Lenis({
+      duration: 1.5, // Ultra smooth scroll inertia
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smoothWheel: true,
+      touchMultiplier: 2,
+    });
+
+    function raf(time) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+
+    requestAnimationFrame(raf);
+
+    return () => {
+      lenis.destroy();
+    };
+  }, []);
+
+  // 20+ Architectural & Interior Brands
   const brands = [
-    "Saint-Gobain", "Asian Paints", "Jaquar", "Hafele", "TOTO",
-    "Kohlér", "Greenlam Laminates", "Fenesta", "Grohe", "Somany Ceramics",
-    "Kajaria", "CenturyPly", "Schneider Electric", "Havells", "D'Decor",
-    "Sleek Kitchens", "Pidilite", "Godrej Interio", "Armstrong Ceiling", "Hettich"
+    { name: "Asian Paints", logo: "https://logo.clearbit.com/asianpaints.com" },
+    { name: "Saint-Gobain", logo: "https://logo.clearbit.com/saint-gobain.com" },
+    { name: "Jaquar", logo: "https://logo.clearbit.com/jaquar.com" },
+    { name: "Häfele", logo: "https://logo.clearbit.com/hafele.com" },
+    { name: "TOTO", logo: "https://logo.clearbit.com/toto.com" },
+    { name: "Kohler", logo: "https://logo.clearbit.com/kohler.com" },
+    { name: "Greenlam", logo: "https://logo.clearbit.com/greenlam.com" },
+    { name: "Grohe", logo: "https://logo.clearbit.com/grohe.com" },
+    { name: "Kajaria", logo: "https://logo.clearbit.com/kajariaceramics.com" },
+    { name: "CenturyPly", logo: "https://logo.clearbit.com/centuryply.com" },
+    { name: "Schneider Electric", logo: "https://logo.clearbit.com/se.com" },
+    { name: "Havells", logo: "https://logo.clearbit.com/havells.com" },
+    { name: "D'Decor", logo: "https://logo.clearbit.com/ddecor.com" },
+    { name: "Pidilite", logo: "https://logo.clearbit.com/pidilite.com" },
+    { name: "Godrej Interio", logo: "https://logo.clearbit.com/godrejinterio.com" },
+    { name: "Hettich", logo: "https://logo.clearbit.com/hettich.com" },
+    { name: "Somany", logo: "https://logo.clearbit.com/somanyceramics.com" },
+    { name: "Fenesta", logo: "https://logo.clearbit.com/fenesta.com" },
+    { name: "Sleek", logo: "https://logo.clearbit.com/sleekworld.com" },
+    { name: "Armstrong", logo: "https://logo.clearbit.com/armstrongceilings.com" },
   ];
 
   // Leadership & Architect Team
@@ -84,7 +158,7 @@ export default function About() {
       name: "Rohan Kapoor",
       role: "Lead Interior Designer",
       experience: "10+ Years Exp.",
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=600"
+      image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=600"
     },
     {
       name: "Navya Agarwal",
@@ -96,7 +170,7 @@ export default function About() {
       name: "Vikramaditya Mehta",
       role: "Project Execution Head",
       experience: "12+ Years Exp.",
-      image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=600"
+      image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=600"
     }
   ];
 
@@ -104,14 +178,13 @@ export default function About() {
     <div className="bg-[#fbfaf7] text-[#22221f] min-h-screen font-sans selection:bg-[#c51f32]/20 selection:text-[#c51f32] overflow-x-hidden">
       
       {/* ================= HERO SECTION ================= */}
-      <section className="relative pt-32 pb-24 border-b border-black/[0.08]">
+      <section className="relative pt-32 pb-24 border-b border-black/[0.08] overflow-hidden">
         <div className="absolute inset-0 opacity-30 bg-[radial-gradient(#22221f_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none" />
         <div className="absolute top-0 right-1/4 w-96 h-96 bg-[#c51f32]/5 rounded-full blur-[140px] pointer-events-none" />
 
         <div className="mx-auto w-[min(1240px,calc(100%-38px))] relative z-10 grid lg:grid-cols-12 gap-12 items-center">
           
-          {/* TEXT (SLIDE FROM LEFT) */}
-          <div className="lg:col-span-7 space-y-6 transition-all duration-1000 transform translate-x-0 opacity-100">
+          <ScrollReveal className="lg:col-span-7 space-y-6">
             <div className="inline-flex items-center gap-2 text-xs tracking-[0.25em] text-[#c51f32] uppercase font-semibold bg-[#c51f32]/5 px-3 py-1.5 rounded-full">
               <Sparkles className="w-4 h-4" />
               <span>About DESIG9 HAUSE</span>
@@ -141,11 +214,9 @@ export default function About() {
                 Explore Solutions <ChevronRight size={14} />
               </Link>
             </div>
-          </div>
+          </ScrollReveal>
 
-          {/* IMAGES (SLIDE FROM RIGHT) */}
-          <div className="lg:col-span-5 relative h-[420px] sm:h-[480px]">
-            {/* Main Center Image */}
+          <ScrollReveal delay={300} className="lg:col-span-5 relative h-[420px] sm:h-[480px]">
             <div className="absolute top-8 right-4 w-[78%] h-[280px] sm:h-[320px] rounded-3xl overflow-hidden shadow-2xl border-4 border-white transition-transform duration-700 hover:scale-[1.02]">
               <img
                 src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=1000"
@@ -154,7 +225,6 @@ export default function About() {
               />
             </div>
 
-            {/* Top Small Overlapping Image */}
             <div className="absolute top-0 right-0 w-[48%] h-[140px] rounded-2xl overflow-hidden shadow-2xl border-4 border-white z-20">
               <img
                 src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&q=80&w=600"
@@ -163,7 +233,6 @@ export default function About() {
               />
             </div>
 
-            {/* Bottom Left Overlapping Image */}
             <div className="absolute bottom-2 left-0 w-[55%] h-[160px] rounded-2xl overflow-hidden shadow-2xl border-4 border-white z-20 bg-white p-2">
               <div className="relative w-full h-full rounded-xl overflow-hidden">
                 <img
@@ -176,50 +245,50 @@ export default function About() {
                 </div>
               </div>
             </div>
-          </div>
+          </ScrollReveal>
 
         </div>
       </section>
 
-      {/* ================= STEP 2: ANIMATED COUNT-UP STATS (1 SE COUNT HONGE) ================= */}
+      {/* ================= STATS SECTION ================= */}
       <section className="py-12 bg-white border-b border-black/[0.08]">
         <div className="mx-auto w-[min(1240px,calc(100%-38px))] grid grid-cols-2 lg:grid-cols-4 gap-8 divide-y sm:divide-y-0 sm:divide-x divide-black/10">
           
-          <div className="text-center pt-4 sm:pt-0">
+          <ScrollReveal delay={100} className="text-center pt-4 sm:pt-0">
             <div className="text-4xl md:text-5xl font-serif text-[#c51f32]">
               <AnimatedCounter from={1} to={15} suffix="+" />
             </div>
             <div className="text-xs uppercase tracking-widest text-stone-500 mt-2 font-medium">
               Cities Presence
             </div>
-          </div>
+          </ScrollReveal>
 
-          <div className="text-center pt-4 sm:pt-0">
+          <ScrollReveal delay={250} className="text-center pt-4 sm:pt-0">
             <div className="text-4xl md:text-5xl font-serif text-[#22221f]">
               <AnimatedCounter from={1} to={1800} suffix="+" duration={2.5} />
             </div>
             <div className="text-xs uppercase tracking-widest text-stone-500 mt-2 font-medium">
               Projects Delivered
             </div>
-          </div>
+          </ScrollReveal>
 
-          <div className="text-center pt-4 sm:pt-0">
+          <ScrollReveal delay={400} className="text-center pt-4 sm:pt-0">
             <div className="text-4xl md:text-5xl font-serif text-[#c51f32]">
               <AnimatedCounter from={1} to={150} suffix="+" />
             </div>
             <div className="text-xs uppercase tracking-widest text-stone-500 mt-2 font-medium">
               Architect Partners
             </div>
-          </div>
+          </ScrollReveal>
 
-          <div className="text-center pt-4 sm:pt-0">
+          <ScrollReveal delay={550} className="text-center pt-4 sm:pt-0">
             <div className="text-4xl md:text-5xl font-serif text-[#22221f]">
               <AnimatedCounter from={1} to={100} suffix="%" />
             </div>
             <div className="text-xs uppercase tracking-widest text-stone-500 mt-2 font-medium">
               Quality Standards
             </div>
-          </div>
+          </ScrollReveal>
 
         </div>
       </section>
@@ -228,19 +297,18 @@ export default function About() {
       <section className="py-24 bg-[#fbfaf7] border-b border-black/[0.08]">
         <div className="mx-auto w-[min(1240px,calc(100%-38px))]">
           
-          <div className="text-center max-w-2xl mx-auto mb-16 space-y-3">
+          <ScrollReveal className="text-center max-w-2xl mx-auto mb-16 space-y-3">
             <span className="text-[10px] font-bold tracking-[0.25em] text-[#c51f32] uppercase">Core Ethos</span>
             <h2 className="text-3xl md:text-5xl font-serif text-[#22221f]">What We Believe</h2>
             <p className="text-xs md:text-sm text-stone-600 leading-relaxed">
               Spaces deeply influence human behavior, wellbeing, and daily comfort. Great architecture goes beyond aesthetics—it elevates living standards.
             </p>
-          </div>
+          </ScrollReveal>
 
           <div className="grid lg:grid-cols-12 gap-12 items-center">
             
             <div className="lg:col-span-6 space-y-8">
-              
-              <div className="flex gap-5 items-start">
+              <ScrollReveal delay={150} className="flex gap-5 items-start">
                 <div className="w-12 h-12 shrink-0 rounded-2xl bg-[#c51f32]/10 text-[#c51f32] flex items-center justify-center font-bold">
                   <HomeIcon size={22} />
                 </div>
@@ -250,9 +318,9 @@ export default function About() {
                     We believe every square foot should serve a deliberate purpose. Unused corners are transformed into functional micro-spaces that adapt to modern lifestyles.
                   </p>
                 </div>
-              </div>
+              </ScrollReveal>
 
-              <div className="flex gap-5 items-start">
+              <ScrollReveal delay={300} className="flex gap-5 items-start">
                 <div className="w-12 h-12 shrink-0 rounded-2xl bg-[#c51f32]/10 text-[#c51f32] flex items-center justify-center font-bold">
                   <ShieldCheck size={22} />
                 </div>
@@ -262,9 +330,9 @@ export default function About() {
                     Shortcuts compromise longevity. We source rigorously tested, sustainable, and premium-grade materials directly from top industry manufacturers.
                   </p>
                 </div>
-              </div>
+              </ScrollReveal>
 
-              <div className="flex gap-5 items-start">
+              <ScrollReveal delay={450} className="flex gap-5 items-start">
                 <div className="w-12 h-12 shrink-0 rounded-2xl bg-[#c51f32]/10 text-[#c51f32] flex items-center justify-center font-bold">
                   <HeartHandshake size={22} />
                 </div>
@@ -274,11 +342,10 @@ export default function About() {
                     Clear BOQs, fixed timelines, and dedicated single-point management ensure zero hidden surprises throughout your construction journey.
                   </p>
                 </div>
-              </div>
-
+              </ScrollReveal>
             </div>
 
-            <div className="lg:col-span-6">
+            <ScrollReveal delay={300} className="lg:col-span-6">
               <div className="relative rounded-3xl overflow-hidden border border-black/10 shadow-2xl">
                 <img
                   src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&q=80&w=1000"
@@ -292,7 +359,7 @@ export default function About() {
                   </div>
                 </div>
               </div>
-            </div>
+            </ScrollReveal>
 
           </div>
 
@@ -303,18 +370,19 @@ export default function About() {
       <section className="py-24 bg-white border-b border-black/[0.08]">
         <div className="mx-auto w-[min(1240px,calc(100%-38px))]">
           
-          <div className="text-center max-w-2xl mx-auto mb-16 space-y-3">
+          <ScrollReveal className="text-center max-w-2xl mx-auto mb-16 space-y-3">
             <span className="text-[10px] font-bold tracking-[0.25em] text-[#c51f32] uppercase">The Minds Behind DESIG9 HAUSE</span>
             <h2 className="text-3xl md:text-5xl font-serif text-[#22221f]">Meet Our Leadership Team</h2>
             <p className="text-xs md:text-sm text-stone-600">
               A passionate collective of licensed architects, creative designers, structural engineers, and project managers dedicated to design perfection.
             </p>
-          </div>
+          </ScrollReveal>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {teamMembers.map((member, idx) => (
-              <div
+              <ScrollReveal
                 key={idx}
+                delay={idx * 150}
                 className="group bg-[#fbfaf7] rounded-3xl overflow-hidden border border-black/10 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
               >
                 <div className="h-72 overflow-hidden relative">
@@ -331,34 +399,47 @@ export default function About() {
                   <h3 className="text-lg font-serif font-semibold text-[#22221f]">{member.name}</h3>
                   <p className="text-xs text-stone-500 font-medium">{member.role}</p>
                 </div>
-              </div>
+              </ScrollReveal>
             ))}
           </div>
 
         </div>
       </section>
 
-      {/* ================= 20+ ARCHITECTURAL & INTERIOR BRANDS ================= */}
+      {/* ================= BRANDS SECTION ================= */}
       <section className="py-20 bg-[#fbfaf7] border-b border-black/[0.08]">
         <div className="mx-auto w-[min(1240px,calc(100%-38px))]">
           
-          <div className="text-center max-w-2xl mx-auto mb-12 space-y-2">
+          <ScrollReveal className="text-center max-w-2xl mx-auto mb-12 space-y-2">
             <span className="text-[10px] font-bold tracking-[0.25em] text-[#c51f32] uppercase">Trusted Ecosystem</span>
             <h2 className="text-2xl md:text-4xl font-serif text-[#22221f]">20+ Industry Leading Material Partners</h2>
             <p className="text-xs md:text-sm text-stone-600">
               We collaborate with premier global and national brands to ensure high durability and fine craftsmanship for every project.
             </p>
-          </div>
+          </ScrollReveal>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
             {brands.map((brand, idx) => (
-              <div
+              <ScrollReveal
                 key={idx}
-                className="p-4 rounded-2xl bg-white border border-black/5 hover:border-[#c51f32]/40 transition-all text-center flex items-center justify-center gap-2 shadow-sm hover:shadow-md"
+                delay={(idx % 5) * 80}
+                className="p-5 rounded-2xl bg-white border border-black/5 hover:border-[#c51f32]/40 transition-all duration-300 flex flex-col items-center justify-center gap-3 shadow-sm hover:shadow-md group h-28"
               >
-                <Building className="w-4 h-4 text-[#c51f32] shrink-0" />
-                <span className="text-xs font-semibold text-stone-800">{brand}</span>
-              </div>
+                <img
+                  src={brand.logo}
+                  alt={`${brand.name} logo`}
+                  className="h-9 w-auto max-w-[110px] object-contain grayscale group-hover:grayscale-0 transition-all duration-300 group-hover:scale-105"
+                  onError={(e) => {
+                    e.target.style.display = "none";
+                    if (e.target.nextSibling) {
+                      e.target.nextSibling.style.display = "block";
+                    }
+                  }}
+                />
+                <span className="text-xs font-semibold text-stone-700 hidden group-hover:text-[#c51f32] transition-colors">
+                  {brand.name}
+                </span>
+              </ScrollReveal>
             ))}
           </div>
 
@@ -366,22 +447,22 @@ export default function About() {
       </section>
 
       {/* ================= CALL TO ACTION ================= */}
-<section className="py-20 bg-[#c51f32] text-white relative overflow-hidden">
-  <div className="mx-auto w-[min(1240px,calc(100%-38px))] text-center space-y-6 relative z-10">
-    <h2 className="text-3xl md:text-5xl font-serif">Ready to build your dream space?</h2>
-    <p className="text-xs md:text-sm text-stone-100 max-w-xl mx-auto opacity-90">
-      Schedule a complimentary consultation with our principal architects and get 3D layout options for your upcoming project.
-    </p>
-    <div className="pt-4">
-      <Link
-        to="/free-site-visit"
-        className="px-8 py-4 rounded-full bg-[#22221f] hover:bg-black text-white font-medium text-xs uppercase tracking-widest transition-all inline-flex items-center gap-2 shadow-xl hover:shadow-black/40"
-      >
-        Book Free Site Visit <ArrowRight size={14} />
-      </Link>
-    </div>
-  </div>
-</section>
+      <section className="py-20 bg-[#c51f32] text-white relative overflow-hidden">
+        <ScrollReveal className="mx-auto w-[min(1240px,calc(100%-38px))] text-center space-y-6 relative z-10">
+          <h2 className="text-3xl md:text-5xl font-serif">Ready to build your dream space?</h2>
+          <p className="text-xs md:text-sm text-stone-100 max-w-xl mx-auto opacity-90">
+            Schedule a complimentary consultation with our principal architects and get 3D layout options for your upcoming project.
+          </p>
+          <div className="pt-4">
+            <Link
+              to="/free-site-visit"
+              className="px-8 py-4 rounded-full bg-[#22221f] hover:bg-black text-white font-medium text-xs uppercase tracking-widest transition-all inline-flex items-center gap-2 shadow-xl hover:shadow-black/40"
+            >
+              Book Free Site Visit <ArrowRight size={14} />
+            </Link>
+          </div>
+        </ScrollReveal>
+      </section>
 
     </div>
   );

@@ -40,6 +40,7 @@
     font-family: "DM Sans", sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
   }
 
   button,
@@ -95,56 +96,50 @@
   }
 }
 
-/* Consistent button text contrast */
-@layer components {
-  a.bg-white,
-  button.bg-white,
-  a.bg-paper,
-  button.bg-paper {
-    color: #22221f;
+/* Precision 2.75-Second Motion Engine Animations */
+@keyframes fadeInLeftSmooth {
+  0% {
+    opacity: 0;
+    transform: translateX(-60px);
   }
-
-  a.bg-white:hover,
-  button.bg-white:hover,
-  a.bg-paper:hover,
-  button.bg-paper:hover {
-    color: #c51f32;
-  }
-
-  a.bg-olive,
-  button.bg-olive,
-  a.bg-ink,
-  button.bg-ink,
-  a.bg-dark,
-  button.bg-dark {
-    color: #fff;
-  }
-
-  a.bg-\[\#c51f32\],
-  button.bg-\[\#c51f32\] {
-    color: #fff;
-  }
-
-  a.bg-white *,
-  button.bg-white *,
-  a.bg-paper *,
-  button.bg-paper * {
-    color: inherit;
+  100% {
+    opacity: 1;
+    transform: translateX(0);
   }
 }
 
-/* Reveal animations */
-.reveal {
-  opacity: 0;
-  transform: translateY(14px);
-  transition:
-    opacity 600ms ease,
-    transform 600ms cubic-bezier(0.2, 0.7, 0.2, 1);
+@keyframes fadeInRightSmooth {
+  0% {
+    opacity: 0;
+    transform: translateX(60px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
-.reveal.is-visible {
-  opacity: 1;
-  transform: translateY(0);
+@keyframes fadeInUpSmooth {
+  0% {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-motion-left {
+  animation: fadeInLeftSmooth 2.75s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-motion-right {
+  animation: fadeInRightSmooth 2.75s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-motion-up {
+  animation: fadeInUpSmooth 2.75s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* Respect reduced-motion preferences */
@@ -156,10 +151,5 @@
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
-  }
-
-  .reveal {
-    opacity: 1;
-    transform: none;
   }
 }

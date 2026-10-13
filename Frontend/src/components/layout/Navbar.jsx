@@ -113,7 +113,6 @@ export default function Navbar() {
             style={({ isActive }) => linkStyle(isActive, hovered === "team", false)}
             className="group relative inline-flex items-center self-start py-4 text-[13px] font-medium tracking-[0.015em] lg:self-auto lg:py-3"
           >
-            <span className="relative z-10">Team</span>
             <span className="absolute inset-x-0 bottom-2 h-px origin-left scale-x-0 bg-[#c51f32] transition-transform duration-300 ease-out group-hover:scale-x-100 lg:bottom-1" />
           </NavLink>
 
