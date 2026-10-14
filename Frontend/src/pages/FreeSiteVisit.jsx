@@ -78,6 +78,7 @@ export default function FreeSiteVisit() {
   });
 
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   // Initialize Lenis Smooth Scroll
   useEffect(() => {
@@ -104,9 +105,26 @@ export default function FreeSiteVisit() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setSubmitted(true);
+    setLoading(true);
+
+    try {
+      const api = import.meta.env.VITE_API_URL || "http://localhost:5000";
+      const res = await fetch(`${api.replace(/\/$/, "")}/site-visits`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      if (!res.ok) throw new Error("Site visit submission failed.");
+      
+      setSubmitted(true);
+    } catch (err) {
+      alert("Error submitting request. Please try again or call us directly.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -117,11 +135,8 @@ export default function FreeSiteVisit() {
         
         {/* --- ARCHITECTURAL GRAPH & CAD BLUEPRINT BACKGROUND --- */}
         <div className="absolute inset-0 pointer-events-none opacity-[0.2]">
-          {/* Main 40px Architectural Grid */}
           <div className="absolute inset-0 bg-[linear-gradient(to_right,#22221f_1px,transparent_1px),linear-gradient(to_bottom,#22221f_1px,transparent_1px)] bg-[size:40px_40px]" />
-          {/* 160px Red Structural Axis Lines */}
           <div className="absolute inset-0 bg-[linear-gradient(to_right,#c51f32_1px,transparent_1px),linear-gradient(to_bottom,#c51f32_1px,transparent_1px)] bg-[size:160px_160px] opacity-40" />
-          {/* Center Blueprint Fade Out */}
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,#fbfaf7_85%)]" />
         </div>
 
@@ -131,7 +146,7 @@ export default function FreeSiteVisit() {
 
         <div className="mx-auto w-[min(1240px,calc(100%-38px))] relative z-10 grid lg:grid-cols-12 gap-12 items-center">
           
-          {/* LEFT SIDE: HERO CONTENT (SLIDES FROM LEFT TO RIGHT - 2.5s) */}
+          {/* LEFT SIDE: HERO CONTENT */}
           <ScrollReveal direction="left" delay={100} className="lg:col-span-7 space-y-6">
             <div className="inline-flex items-center gap-2 text-xs tracking-[0.25em] text-[#c51f32] uppercase font-semibold bg-[#c51f32]/5 px-3.5 py-1.5 rounded-full border border-[#c51f32]/10">
               <Sparkles className="w-4 h-4" />
@@ -164,11 +179,10 @@ export default function FreeSiteVisit() {
             </div>
           </ScrollReveal>
 
-          {/* RIGHT SIDE: ARCHITECTURAL SITE INSPECTION IMAGE GALLERY (SLIDES FROM RIGHT TO LEFT - 2.5s) */}
+          {/* RIGHT SIDE: GALLERY */}
           <ScrollReveal direction="right" delay={300} className="lg:col-span-5 relative">
             <div className="relative h-[420px] sm:h-[480px] w-full">
               
-              {/* Main Architectural Site Survey Image */}
               <div className="absolute top-8 right-0 w-[85%] h-[320px] rounded-3xl overflow-hidden shadow-2xl border-4 border-white group">
                 <img
                   src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=1200"
@@ -183,7 +197,6 @@ export default function FreeSiteVisit() {
                 </div>
               </div>
 
-              {/* Top Overlapping Drafting Blueprint Card */}
               <div className="absolute top-0 left-0 w-[58%] h-[150px] rounded-2xl overflow-hidden shadow-2xl border-4 border-white z-20 group bg-white">
                 <img
                   src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&q=80&w=600"
@@ -195,7 +208,6 @@ export default function FreeSiteVisit() {
                 </div>
               </div>
 
-              {/* Bottom Floating Technical Badge */}
               <div className="absolute bottom-2 left-4 z-30 bg-white border border-black/10 p-4 rounded-2xl shadow-xl max-w-[240px] flex items-center gap-3">
                 <div className="p-2.5 rounded-xl bg-[#c51f32]/10 text-[#c51f32] shrink-0">
                   <Building2 size={20} />
@@ -238,7 +250,7 @@ export default function FreeSiteVisit() {
       <section className="py-20">
         <div className="mx-auto w-[min(1240px,calc(100%-38px))] grid lg:grid-cols-12 gap-12">
           
-          {/* LEFT SIDE: WHATS INCLUDED & PROCESS */}
+          {/* LEFT SIDE: PROCESS */}
           <ScrollReveal direction="left" delay={200} className="lg:col-span-5 space-y-10">
             <div>
               <span className="text-xs uppercase tracking-[0.2em] text-[#c51f32] font-semibold">Why Request a Visit?</span>
@@ -252,26 +264,10 @@ export default function FreeSiteVisit() {
 
             <div className="space-y-6">
               {[
-                {
-                  title: "1. Solar & Orientation Analysis",
-                  desc: "Evaluating natural light, wind direction, and microclimate to optimize passive cooling and daylighting.",
-                  icon: Compass
-                },
-                {
-                  title: "2. Zoning & Bye-Law Verification",
-                  desc: "Reviewing setbacks, FAR (Floor Area Ratio), height limits, and local municipal regulations.",
-                  icon: Layers
-                },
-                {
-                  title: "3. Topography & Soil Contour Study",
-                  desc: "Analyzing land slope, levels, and soil stability for structural integrity and foundation planning.",
-                  icon: Ruler
-                },
-                {
-                  title: "4. Concept & Spatial Layout Blueprint",
-                  desc: "Discussing client lifestyle needs, room adjacencies, Vastu/architectural flow, and luxury aesthetics.",
-                  icon: Building2
-                }
+                { title: "1. Solar & Orientation Analysis", desc: "Evaluating natural light, wind direction, and microclimate to optimize passive cooling and daylighting.", icon: Compass },
+                { title: "2. Zoning & Bye-Law Verification", desc: "Reviewing setbacks, FAR (Floor Area Ratio), height limits, and local municipal regulations.", icon: Layers },
+                { title: "3. Topography & Soil Contour Study", desc: "Analyzing land slope, levels, and soil stability for structural integrity and foundation planning.", icon: Ruler },
+                { title: "4. Concept & Spatial Layout Blueprint", desc: "Discussing client lifestyle needs, room adjacencies, Vastu/architectural flow, and luxury aesthetics.", icon: Building2 }
               ].map((step, idx) => (
                 <div key={idx} className="p-5 rounded-xl bg-white border border-black/10 shadow-sm hover:border-[#c51f32]/40 transition-all duration-300">
                   <div className="flex items-center gap-3">
@@ -283,7 +279,6 @@ export default function FreeSiteVisit() {
               ))}
             </div>
 
-            {/* Direct Contact Card */}
             <div className="p-6 rounded-2xl bg-gradient-to-br from-[#c51f32]/10 via-white to-transparent border border-[#c51f32]/20 shadow-md">
               <h4 className="text-sm font-semibold text-[#22221f]">Prefer a direct conversation?</h4>
               <p className="text-xs text-stone-600 mt-1">Speak directly with our chief architectural coordinators.</p>
@@ -298,7 +293,7 @@ export default function FreeSiteVisit() {
             </div>
           </ScrollReveal>
 
-          {/* RIGHT SIDE: LUXURY BOOKING FORM */}
+          {/* RIGHT SIDE: FORM */}
           <ScrollReveal direction="right" delay={400} className="lg:col-span-7">
             <div className="p-8 md:p-10 rounded-3xl bg-white border border-black/10 shadow-2xl relative">
               <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 px-5 py-1.5 rounded-full bg-[#c51f32] text-white font-medium text-[11px] tracking-wider uppercase shadow-lg">
@@ -328,12 +323,9 @@ export default function FreeSiteVisit() {
                     <p className="text-xs text-stone-500 mt-1">Fill in the site particulars for an accurate architectural prep.</p>
                   </div>
 
-                  {/* Personal Info */}
                   <div className="grid md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-[11px] font-medium text-stone-700 uppercase tracking-wider mb-2">
-                        Full Name *
-                      </label>
+                      <label className="block text-[11px] font-medium text-stone-700 uppercase tracking-wider mb-2">Full Name *</label>
                       <div className="relative">
                         <User className="w-4 h-4 absolute left-3.5 top-3 text-stone-400" />
                         <input
@@ -349,9 +341,7 @@ export default function FreeSiteVisit() {
                     </div>
 
                     <div>
-                      <label className="block text-[11px] font-medium text-stone-700 uppercase tracking-wider mb-2">
-                        Phone Number *
-                      </label>
+                      <label className="block text-[11px] font-medium text-stone-700 uppercase tracking-wider mb-2">Phone Number *</label>
                       <div className="relative">
                         <PhoneCall className="w-4 h-4 absolute left-3.5 top-3 text-stone-400" />
                         <input
@@ -369,9 +359,7 @@ export default function FreeSiteVisit() {
 
                   <div className="grid md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-[11px] font-medium text-stone-700 uppercase tracking-wider mb-2">
-                        Email Address *
-                      </label>
+                      <label className="block text-[11px] font-medium text-stone-700 uppercase tracking-wider mb-2">Email Address *</label>
                       <div className="relative">
                         <Mail className="w-4 h-4 absolute left-3.5 top-3 text-stone-400" />
                         <input
@@ -387,9 +375,7 @@ export default function FreeSiteVisit() {
                     </div>
 
                     <div>
-                      <label className="block text-[11px] font-medium text-stone-700 uppercase tracking-wider mb-2">
-                        Site Location / Address *
-                      </label>
+                      <label className="block text-[11px] font-medium text-stone-700 uppercase tracking-wider mb-2">Site Location / Address *</label>
                       <div className="relative">
                         <MapPin className="w-4 h-4 absolute left-3.5 top-3 text-stone-400" />
                         <input
@@ -405,12 +391,9 @@ export default function FreeSiteVisit() {
                     </div>
                   </div>
 
-                  {/* Project Details */}
                   <div className="grid md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-[11px] font-medium text-stone-700 uppercase tracking-wider mb-2">
-                        Property Type
-                      </label>
+                      <label className="block text-[11px] font-medium text-stone-700 uppercase tracking-wider mb-2">Property Type</label>
                       <select
                         name="propertyType"
                         value={formData.propertyType}
@@ -426,9 +409,7 @@ export default function FreeSiteVisit() {
                     </div>
 
                     <div>
-                      <label className="block text-[11px] font-medium text-stone-700 uppercase tracking-wider mb-2">
-                        Plot Size / Built-up Area
-                      </label>
+                      <label className="block text-[11px] font-medium text-stone-700 uppercase tracking-wider mb-2">Plot Size / Built-up Area</label>
                       <input
                         type="text"
                         name="plotArea"
@@ -440,12 +421,9 @@ export default function FreeSiteVisit() {
                     </div>
                   </div>
 
-                  {/* Date & Time Selection */}
                   <div className="grid md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-[11px] font-medium text-stone-700 uppercase tracking-wider mb-2">
-                        Preferred Date *
-                      </label>
+                      <label className="block text-[11px] font-medium text-stone-700 uppercase tracking-wider mb-2">Preferred Date *</label>
                       <div className="relative">
                         <Calendar className="w-4 h-4 absolute left-3.5 top-3 text-stone-400" />
                         <input
@@ -460,9 +438,7 @@ export default function FreeSiteVisit() {
                     </div>
 
                     <div>
-                      <label className="block text-[11px] font-medium text-stone-700 uppercase tracking-wider mb-2">
-                        Preferred Time Slot
-                      </label>
+                      <label className="block text-[11px] font-medium text-stone-700 uppercase tracking-wider mb-2">Preferred Time Slot</label>
                       <div className="relative">
                         <Clock className="w-4 h-4 absolute left-3.5 top-3 text-stone-400" />
                         <select
@@ -479,11 +455,8 @@ export default function FreeSiteVisit() {
                     </div>
                   </div>
 
-                  {/* Notes / Specific Requirements */}
                   <div>
-                    <label className="block text-[11px] font-medium text-stone-700 uppercase tracking-wider mb-2">
-                      Specific Architectural Requirements or Notes
-                    </label>
+                    <label className="block text-[11px] font-medium text-stone-700 uppercase tracking-wider mb-2">Specific Architectural Requirements or Notes</label>
                     <textarea
                       name="message"
                       rows={3}
@@ -494,12 +467,12 @@ export default function FreeSiteVisit() {
                     />
                   </div>
 
-                  {/* Submit Button */}
                   <button
                     type="submit"
-                    className="w-full py-3.5 px-6 rounded-xl bg-[#c51f32] hover:bg-[#a71929] text-white font-semibold text-xs uppercase tracking-widest transition-all shadow-lg hover:shadow-[#c51f32]/30 flex items-center justify-center gap-2 group"
+                    disabled={loading}
+                    className="w-full py-3.5 px-6 rounded-xl bg-[#c51f32] hover:bg-[#a71929] text-white font-semibold text-xs uppercase tracking-widest transition-all shadow-lg hover:shadow-[#c51f32]/30 flex items-center justify-center gap-2 group disabled:opacity-50"
                   >
-                    Confirm Free Site Visit Request
+                    {loading ? "Submitting..." : "Confirm Free Site Visit Request"}
                     <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                   </button>
 
@@ -561,22 +534,10 @@ export default function FreeSiteVisit() {
 
           <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto text-xs">
             {[
-              {
-                q: "Is the site visit truly free of cost?",
-                a: "Yes. For serious residential villas and commercial projects within our service zones, the initial architectural visit and spatial consultation are 100% complimentary."
-              },
-              {
-                q: "Who from DESIG9 HAUSE will visit the site?",
-                a: "A Senior Principal Architect or lead design consultant accompanied by a structural strategist will conduct the visit."
-              },
-              {
-                q: "What should I keep ready during the visit?",
-                a: "Having plot dimensions, key layout maps, municipal papers, and any reference inspiration images helps us maximize the visit's efficiency."
-              },
-              {
-                q: "How soon can we schedule after booking?",
-                a: "We usually schedule visits within 24 to 48 hours of your submission based on architect availability."
-              }
+              { q: "Is the site visit truly free of cost?", a: "Yes. For serious residential villas and commercial projects within our service zones, the initial architectural visit and spatial consultation are 100% complimentary." },
+              { q: "Who from DESIG9 HAUSE will visit the site?", a: "A Senior Principal Architect or lead design consultant accompanied by a structural strategist will conduct the visit." },
+              { q: "What should I keep ready during the visit?", a: "Having plot dimensions, key layout maps, municipal papers, and any reference inspiration images helps us maximize the visit's efficiency." },
+              { q: "How soon can we schedule after booking?", a: "We usually schedule visits within 24 to 48 hours of your submission based on architect availability." }
             ].map((faq, i) => (
               <ScrollReveal key={i} delay={i * 150} className="p-5 rounded-2xl bg-white border border-black/10 shadow-sm space-y-2">
                 <h3 className="font-semibold text-[#22221f]">{faq.q}</h3>
