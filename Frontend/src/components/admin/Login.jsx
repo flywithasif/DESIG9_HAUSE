@@ -16,7 +16,9 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const api = import.meta.env.VITE_API_URL || "http://localhost:5000";
+      const api = (
+  import.meta.env.VITE_API_URL || "http://localhost:5000"
+).replace(/\/+$/, "");
       const res = await fetch(`${api}/admin/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
