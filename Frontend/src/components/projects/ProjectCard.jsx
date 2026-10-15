@@ -124,10 +124,6 @@ export default function ProjectCard({ project, index = 0 }) {
           <span className="min-w-0 break-words">
             CATEGORY // {project.category || "Architecture"}
           </span>
-
-          <span className="shrink-0 text-stone-400">
-            COMMISSIONED
-          </span>
         </div>
 
         {/* Title */}
@@ -211,16 +207,6 @@ export default function ProjectCard({ project, index = 0 }) {
               "
             />
           </Link>
-
-          <span
-            className="
-              shrink-0
-              text-[9px] sm:text-[10px]
-              font-mono text-stone-400
-            "
-          >
-            ARCH 1:1
-          </span>
         </div>
       </div>
     </article>
