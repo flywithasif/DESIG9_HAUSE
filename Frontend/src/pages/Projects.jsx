@@ -1,58 +1,73 @@
-﻿import React, { useMemo, useState, useEffect, useRef } from "react";
+﻿
+import React, { useMemo, useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import Lenis from "lenis";
-import { 
-  ArrowUpRight, 
-  Sparkles, 
-  Ruler, 
-  Compass, 
-  Layers, 
-  ShieldCheck, 
-  Star, 
-  CheckCircle2, 
+import {
+  ArrowUpRight,
+  Compass,
+  Ruler,
+  ShieldCheck,
+  Star,
+  CheckCircle2,
   ArrowRight,
   HardHat,
   Truck,
   FileCheck,
-  Check
 } from "lucide-react";
 import { projects, projectCategories } from "../data/projects";
 import ProjectCard from "../components/projects/ProjectCard";
 
-// 2.5 Seconds Cinematic Scroll Reveal Component
-function ScrollReveal({ children, className = "", delay = 0, direction = "up" }) {
+// Responsive cinematic scroll reveal
+function ScrollReveal({
+  children,
+  className = "",
+  delay = 0,
+  direction = "up",
+}) {
   const [isVisible, setIsVisible] = useState(false);
   const domRef = useRef(null);
 
   useEffect(() => {
+    const element = domRef.current;
+    if (!element) return;
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
           setIsVisible(true);
+          observer.unobserve(entry.target);
         }
       },
-      { threshold: 0.1 }
+      {
+        threshold: 0.05,
+        rootMargin: "0px 0px 40px 0px",
+      }
     );
 
-    if (domRef.current) observer.observe(domRef.current);
+    observer.observe(element);
+
     return () => observer.disconnect();
   }, []);
 
-  let transformHidden = "translate-y-20 scale-95";
-  if (direction === "left") transformHidden = "-translate-x-16 scale-95";
-  if (direction === "right") transformHidden = "translate-x-16 scale-95";
+  const hiddenTransform = {
+    up: "translate-y-10 sm:translate-y-20",
+    left: "-translate-x-6 sm:-translate-x-16",
+    right: "translate-x-6 sm:translate-x-16",
+  };
 
   return (
     <div
       ref={domRef}
       style={{
-        transitionDuration: "2500ms",
+        transitionDuration: "1200ms",
         transitionDelay: `${delay}ms`,
       }}
-      className={`transition-all ease-out transform ${
+      className={`min-w-0 max-w-full transition-[opacity,transform] ease-out ${
         isVisible
-          ? "opacity-100 translate-x-0 translate-y-0 scale-100"
-          : `opacity-0 ${transformHidden} pointer-events-none`
+          ? "opacity-100 translate-x-0 translate-y-0"
+          : `opacity-0 ${
+              hiddenTransform[direction] || hiddenTransform.up
+            } pointer-events-none`
       } ${className}`}
     >
       {children}
@@ -63,36 +78,44 @@ function ScrollReveal({ children, className = "", delay = 0, direction = "up" })
 export default function Projects() {
   const [category, setCategory] = useState("All");
   const [activeTab, setActiveTab] = useState(0);
-  const [activeItemIndex, setActiveItemIndex] = useState({ cardIndex: null, itemIndex: null });
+  const [activeItemIndex, setActiveItemIndex] = useState({
+    cardIndex: null,
+    itemIndex: null,
+  });
 
   useEffect(() => {
     window.scrollTo(0, 0);
 
     const lenis = new Lenis({
-      duration: 1.5,
+      duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       smoothWheel: true,
-      touchMultiplier: 2,
+      touchMultiplier: 1.5,
     });
+
+    let rafId;
 
     function raf(time) {
       lenis.raf(time);
-      requestAnimationFrame(raf);
+      rafId = requestAnimationFrame(raf);
     }
 
-    requestAnimationFrame(raf);
+    rafId = requestAnimationFrame(raf);
 
     return () => {
+      cancelAnimationFrame(rafId);
       lenis.destroy();
     };
   }, []);
 
   const filtered = useMemo(
-    () => (category === "All" ? projects : projects.filter((p) => p.category === category)),
+    () =>
+      category === "All"
+        ? projects
+        : projects.filter((project) => project.category === category),
     [category]
   );
 
-  // 25 Real Client Reviews Data
   const reviewsList = [
     { name: "Aarav Khanna", role: "Villa Owner · Golf City", rating: 5.0, text: "Desig9 Hause delivered our dream villa with unmatched structural elegance. Highly recommended!" },
     { name: "Priya Sharma", role: "Interior Client · Hazratganj", rating: 4.8, text: "The interior space planning and lighting ambiance transformed our penthouse completely." },
@@ -118,211 +141,257 @@ export default function Projects() {
     { name: "Aakash Pandey", role: "Apartment Client · Hazratganj", rating: 4.9, text: "Smart switches, safety doors, and invisible grills installed with absolute neatness." },
     { name: "Vandana Seth", role: "Bungalow Owner · Golf City", rating: 5.0, text: "Principal architects Sagar Vij and Navya Agarwal gave personal attention to our project." },
     { name: "Manish Tripathi", role: "Workspace Client · IT City", rating: 4.8, text: "Great energy efficiency and modern spatial flow. Delivered right on schedule." },
-    { name: "Rajnish Shukla", role: "Estate Owner · Sultanpur Road", rating: 4.9, text: "Uncompromising quality and seamless execution. The best architectural investment." }
+    { name: "Rajnish Shukla", role: "Estate Owner · Sultanpur Road", rating: 4.9, text: "Uncompromising quality and seamless execution. The best architectural investment." },
   ];
 
-  // Guarantee Tabs Configuration
   const guaranteeTabs = [
     {
       id: "effortless",
       title: "Buy & Build, Effortlessly",
       badge: "SINGLE POINT OF CONTACT",
-      subTitle: "Our Project Managers manage everything, as a single point of contact"
+      subTitle: "Our Project Managers manage everything, as a single point of contact",
     },
     {
       id: "price",
       title: "Best Price Guarantee",
       badge: "BEST PRICE GUARANTEE",
-      subTitle: "Transparent structural costing with zero hidden markups"
+      subTitle: "Transparent structural costing with zero hidden markups",
     },
     {
       id: "materials",
       title: "Genuine Materials Only",
       badge: "GENUINE MATERIALS ONLY",
-      subTitle: "Curated 100% authentic materials directly sourced from luxury brands"
+      subTitle: "Curated 100% authentic materials directly sourced from luxury brands",
     },
     {
       id: "precision",
       title: "Precision by Trusted Experts",
       badge: "PRECISION BY TRUSTED EXPERTS",
-      subTitle: "Multi-stage site quality audits by licensed principal architects"
-    }
+      subTitle: "Multi-stage site quality audits by licensed principal architects",
+    },
   ];
 
   const addonsList = [
     {
       category: "Furnitures add-ons",
       items: ["Bespoke Sofa Sets", "Custom Beds & Headboards", "Dining Sets & Console Tables"],
-      poweredBy: "DURIAN · GODREJ INTERIO · NILKAMAL"
+      poweredBy: "DURIAN · GODREJ INTERIO · NILKAMAL",
     },
     {
       category: "Appliances add-ons",
       items: ["Ducted Air Conditioning", "Built-in Refrigerator Units", "Acoustic Washing Systems"],
-      poweredBy: "LG · SAMSUNG · BOSCH"
+      poweredBy: "LG · SAMSUNG · BOSCH",
     },
     {
       category: "Fixtures add-ons",
       items: ["Premium Bathroom Fittings", "Designer Thermostatic Faucets", "Rainfall Shower Systems"],
-      poweredBy: "JAQUAR · KOHLER · HINDWARE"
+      poweredBy: "JAQUAR · KOHLER · HINDWARE",
     },
     {
       category: "Electrical add-ons",
       items: ["Smart Switches & Sockets", "Architectural Magnetic Tracks", "Silent BLDC Ceiling Fans"],
-      poweredBy: "HAVELLS · SCHNEIDER · LEGRAND"
+      poweredBy: "HAVELLS · SCHNEIDER · LEGRAND",
     },
     {
       category: "Services add-ons",
       items: ["Textured & Metallic Paintings", "Seamless Gypsum False Ceilings", "Imported Textile Wallpapers"],
-      poweredBy: "ASIAN PAINTS · BERGER · NEROLAC"
+      poweredBy: "ASIAN PAINTS · BERGER · NEROLAC",
     },
     {
       category: "Outdoor add-ons",
       items: ["Glass Porta Cabins", "Bio-climatic Pergolas", "Landscape Garden Pathways"],
-      poweredBy: "DESIG9 HAUSE OUTDOOR LAB"
-    }
+      poweredBy: "DESIG9 HAUSE OUTDOOR LAB",
+    },
   ];
 
   return (
-    <div className="bg-[#fbfaf7] text-[#22221f] min-h-screen font-sans selection:bg-[#c51f32] selection:text-white overflow-x-hidden">
-      
-      {/* Hide Scrollbars & Define Continuous Animation */}
+    <main className="min-h-screen overflow-x-clip bg-[#fbfaf7] font-sans text-[#22221f] selection:bg-[#c51f32] selection:text-white">
       <style>{`
         .no-scrollbar::-webkit-scrollbar {
           display: none;
         }
+
         .no-scrollbar {
           -ms-overflow-style: none;
           scrollbar-width: none;
         }
+
         @keyframes scrollContinuous {
           0% { transform: translateX(0); }
           100% { transform: translateX(-50%); }
         }
+
         .animate-scroll-continuous {
           display: flex;
           width: max-content;
           animation: scrollContinuous 45s linear infinite;
+          will-change: transform;
         }
+
         .animate-scroll-continuous:hover {
           animation-play-state: paused;
         }
+
+        @media (max-width: 640px) {
+          .animate-scroll-continuous {
+            animation-duration: 65s;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .animate-scroll-continuous {
+            animation-duration: 120s;
+          }
+        }
+
+        .project-scroll {
+          overscroll-behavior-x: contain;
+          -webkit-overflow-scrolling: touch;
+        }
       `}</style>
 
-      {/* ================= HERO SECTION WITH APEX CORPORATE HUB IMAGE ================= */}
-      <section className="relative pt-36 pb-28 md:pt-44 md:pb-36 border-b border-stone-200 overflow-hidden bg-white">
-        <div className="absolute top-0 right-1/3 w-[500px] h-[500px] bg-[#c51f32]/5 rounded-full blur-[150px] pointer-events-none" />
+      {/* HERO */}
+      <section className="relative overflow-hidden border-b border-stone-200 bg-white pb-12 pt-28 sm:pb-20 sm:pt-36 lg:pb-28 lg:pt-44">
+        <div className="pointer-events-none absolute right-0 top-0 h-64 w-64 rounded-full bg-[#c51f32]/5 blur-[100px] sm:right-1/3 sm:h-[500px] sm:w-[500px] sm:blur-[150px]" />
 
-        <div className="mx-auto w-[min(1320px,calc(100%-38px))] relative z-10 grid lg:grid-cols-12 gap-12 items-center">
-          
-          <ScrollReveal direction="left" delay={100} className="lg:col-span-6 space-y-6">
+        <div className="relative z-10 mx-auto grid w-[calc(100%-32px)] max-w-[1320px] items-center gap-10 sm:w-[calc(100%-48px)] sm:gap-12 lg:grid-cols-12">
+          <ScrollReveal direction="left" delay={100} className="min-w-0 space-y-5 sm:space-y-6 lg:col-span-6">
             <div className="flex items-center gap-3">
-              <span className="h-[1px] w-12 bg-[#c51f32]"></span>
-              <span className="text-[11px] font-bold tracking-[.35em] uppercase text-[#c51f32] font-mono">
-                DESIG9 HAUSE // ARCHITECTURAL PORTFOLIO[cite: 7, 8]
+              <span className="h-px w-8 shrink-0 bg-[#c51f32] sm:w-12" />
+              <span className="text-[9px] font-bold uppercase tracking-[0.18em] text-[#c51f32] sm:text-[11px] sm:tracking-[0.3em]">
+                DESIG9 HAUSE // ARCHITECTURAL PORTFOLIO
               </span>
             </div>
 
-            <h1 className="text-5xl sm:text-7xl lg:text-8xl font-serif font-light tracking-tight leading-[1.04]">
-              Raw To <span className="italic text-[#c51f32] font-normal">Ready.</span>
+            <h1 className="break-words font-serif text-4xl font-light leading-[1.08] tracking-tight sm:text-6xl md:text-7xl lg:text-8xl">
+              Raw To <span className="font-normal italic text-[#c51f32]">Ready.</span>
             </h1>
 
-            <p className="text-base md:text-lg text-stone-600 font-light leading-relaxed max-w-xl">
-              Turnkey spatial transformation studio shaping luxury residential estates, commercial landmarks, and resort landscapes across India.[cite: 8, 14]
+            <p className="max-w-xl text-sm font-light leading-7 text-stone-600 sm:text-base md:text-lg md:leading-relaxed">
+              Turnkey spatial transformation studio shaping luxury residential estates, commercial landmarks, and resort landscapes across India.
             </p>
 
-            <div className="pt-2 flex flex-wrap gap-4">
+            <div className="flex flex-col gap-3 pt-2 min-[420px]:flex-row min-[420px]:flex-wrap">
               <Link
                 to="/free-site-visit"
-                className="inline-flex items-center gap-3 bg-[#22221f] text-white px-7 py-4 text-xs font-semibold uppercase tracking-[.2em] transition-all hover:bg-[#c51f32]"
+                className="inline-flex min-h-12 w-full items-center justify-center gap-3 bg-[#22221f] px-5 py-3.5 text-center text-[10px] font-semibold uppercase tracking-[0.12em] text-white transition-colors hover:bg-[#c51f32] min-[420px]:w-auto sm:px-7 sm:text-xs sm:tracking-[0.2em]"
               >
                 <span>Book Free Site Visit</span>
-                <Compass size={16} />
+                <Compass size={16} className="shrink-0" />
               </Link>
+
               <Link
                 to="/contact"
-                className="inline-flex items-center gap-3 bg-stone-100 border border-stone-300 text-[#22221f] px-7 py-4 text-xs font-semibold uppercase tracking-[.2em] transition-all hover:border-[#c51f32] hover:text-[#c51f32]"
+                className="inline-flex min-h-12 w-full items-center justify-center gap-3 border border-stone-300 bg-stone-100 px-5 py-3.5 text-center text-[10px] font-semibold uppercase tracking-[0.12em] text-[#22221f] transition-colors hover:border-[#c51f32] hover:text-[#c51f32] min-[420px]:w-auto sm:px-7 sm:text-xs sm:tracking-[0.2em]"
               >
                 <span>Plan Your Space</span>
-                <ArrowUpRight size={16} />
+                <ArrowUpRight size={16} className="shrink-0" />
               </Link>
             </div>
 
-            <div className="pt-8 grid grid-cols-3 gap-6 border-t border-stone-200">
-              <div>
-                <div className="text-3xl font-serif text-[#22221f]">12+</div>
-                <div className="text-[10px] uppercase font-mono tracking-widest text-stone-500 mt-1">Cities Covered</div>
+            <div className="grid grid-cols-3 gap-3 border-t border-stone-200 pt-6 sm:gap-6 sm:pt-8">
+              <div className="min-w-0">
+                <div className="font-serif text-2xl text-[#22221f] sm:text-3xl">12+</div>
+                <div className="mt-1 text-[8px] uppercase leading-relaxed tracking-[0.08em] text-stone-500 sm:text-[10px] sm:tracking-widest">
+                  Cities Covered
+                </div>
               </div>
-              <div>
-                <div className="text-3xl font-serif text-[#c51f32]">1,500+</div>
-                <div className="text-[10px] uppercase font-mono tracking-widest text-stone-500 mt-1">Projects Delivered</div>
+
+              <div className="min-w-0">
+                <div className="font-serif text-2xl text-[#c51f32] sm:text-3xl">1,500+</div>
+                <div className="mt-1 text-[8px] uppercase leading-relaxed tracking-[0.08em] text-stone-500 sm:text-[10px] sm:tracking-widest">
+                  Projects Delivered
+                </div>
               </div>
-              <div>
-                <div className="text-3xl font-serif text-[#22221f]">175+</div>
-                <div className="text-[10px] uppercase font-mono tracking-widest text-stone-500 mt-1">Brand Partners</div>
+
+              <div className="min-w-0">
+                <div className="font-serif text-2xl text-[#22221f] sm:text-3xl">175+</div>
+                <div className="mt-1 text-[8px] uppercase leading-relaxed tracking-[0.08em] text-stone-500 sm:text-[10px] sm:tracking-widest">
+                  Brand Partners
+                </div>
               </div>
             </div>
           </ScrollReveal>
 
-          {/* RIGHT OVERLAPPING CARDS WITH APEX CORPORATE HUB PROFESSIONAL ARCHITECTURE IMAGE */}
-          <ScrollReveal direction="right" delay={300} className="lg:col-span-6 relative h-[480px] sm:h-[540px] w-full">
-            <div className="absolute top-0 right-0 w-[80%] h-[78%] rounded-3xl overflow-hidden shadow-2xl border-4 border-white group">
+          {/* Overlapping architectural images */}
+          <ScrollReveal
+            direction="right"
+            delay={200}
+            className="relative mx-auto h-[330px] w-full min-w-0 max-w-[600px] min-[400px]:h-[390px] sm:h-[500px] lg:col-span-6 lg:h-[480px]"
+          >
+            <div className="group absolute right-0 top-0 h-[78%] w-[83%] overflow-hidden rounded-2xl border-[3px] border-white shadow-2xl sm:rounded-3xl sm:border-4">
               <img
                 src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=1200"
                 alt="Apex Corporate Hub"
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000"
+                loading="eager"
+                className="h-full w-full object-cover transition-transform duration-1000 group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-80" />
-              <div className="absolute bottom-6 left-6 text-white space-y-1">
-                <span className="text-[10px] font-mono tracking-widest uppercase bg-[#c51f32] px-2.5 py-1 rounded">COMMERCIAL LANDMARK</span>
-                <h3 className="text-xl font-serif">Apex Corporate Hub · Vibhuti Khand</h3>
+              <div className="absolute bottom-3 left-3 right-3 space-y-1 text-white sm:bottom-6 sm:left-6 sm:right-6">
+                <span className="inline-block rounded bg-[#c51f32] px-2 py-1 text-[8px] font-mono uppercase tracking-wider sm:px-2.5 sm:text-[10px] sm:tracking-widest">
+                  COMMERCIAL LANDMARK
+                </span>
+                <h3 className="break-words font-serif text-sm sm:text-xl">
+                  Apex Corporate Hub · Vibhuti Khand
+                </h3>
               </div>
             </div>
 
-            <div className="absolute top-6 left-0 w-[48%] h-[160px] rounded-2xl overflow-hidden shadow-2xl border-2 border-white z-20 group">
+            <div className="group absolute left-0 top-5 z-20 h-[32%] w-[45%] overflow-hidden rounded-xl border-2 border-white shadow-2xl sm:top-6 sm:h-[160px] sm:w-[48%] sm:rounded-2xl">
               <img
                 src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=600"
                 alt="Corporate Interior Workspace"
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                loading="lazy"
+                className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
-              <div className="absolute bottom-2 left-2 bg-black/80 backdrop-blur-md px-2.5 py-1 rounded text-[9px] text-white font-mono uppercase">
+              <div className="absolute bottom-1.5 left-1.5 rounded bg-black/80 px-2 py-1 text-[7px] uppercase text-white sm:bottom-2 sm:left-2 sm:text-[9px]">
                 Executive Workspace
               </div>
             </div>
 
-            <div className="absolute bottom-2 left-8 w-[52%] h-[160px] rounded-2xl overflow-hidden shadow-2xl border-2 border-white z-30 group">
+            <div className="group absolute bottom-0 left-[7%] z-30 h-[32%] w-[51%] overflow-hidden rounded-xl border-2 border-white shadow-2xl sm:bottom-2 sm:left-8 sm:h-[160px] sm:w-[52%] sm:rounded-2xl">
               <img
                 src="https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&q=80&w=600"
                 alt="Innovation Hub"
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                loading="lazy"
+                className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
-              <div className="absolute bottom-2 left-2 bg-black/80 backdrop-blur-md px-2.5 py-1 rounded text-[9px] text-white font-mono uppercase">
+              <div className="absolute bottom-1.5 left-1.5 rounded bg-black/80 px-2 py-1 text-[7px] uppercase text-white sm:bottom-2 sm:left-2 sm:text-[9px]">
                 Collaboration Suite
               </div>
             </div>
           </ScrollReveal>
-
         </div>
       </section>
 
-      {/* ================= PROJECT FILTER & GRID SECTION ================= */}
-      <section className="py-24">
-        <div className="mx-auto w-[min(1320px,calc(100%-38px))]">
-          
-          <div className="mb-14 flex flex-col md:flex-row md:items-end justify-between gap-8 border-b border-stone-300 pb-8">
-            <ScrollReveal direction="left" delay={100}>
-              <span className="text-[10px] font-bold tracking-[.3em] text-[#c51f32] uppercase font-mono">CURATED COMMISSIONS</span>
-              <h2 className="text-4xl sm:text-6xl font-serif text-[#22221f] mt-2">Selected Architectural Works</h2>
+      {/* PROJECT FILTERS AND GRID */}
+      <section className="py-14 sm:py-20 lg:py-24">
+        <div className="mx-auto w-[calc(100%-32px)] max-w-[1320px] sm:w-[calc(100%-48px)]">
+          <div className="mb-9 flex flex-col gap-6 border-b border-stone-300 pb-6 sm:mb-14 sm:gap-8 sm:pb-8 md:flex-row md:items-end md:justify-between">
+            <ScrollReveal direction="left" delay={100} className="min-w-0">
+              <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-[#c51f32] sm:text-[10px] sm:tracking-[0.3em]">
+                CURATED COMMISSIONS
+              </span>
+              <h2 className="mt-2 break-words font-serif text-3xl text-[#22221f] sm:text-5xl lg:text-6xl">
+                Selected Architectural Works
+              </h2>
             </ScrollReveal>
 
-            <ScrollReveal direction="right" delay={200} className="flex flex-wrap gap-2">
+            <ScrollReveal
+              direction="right"
+              delay={150}
+              className="project-scroll no-scrollbar flex max-w-full flex-nowrap gap-2 overflow-x-auto pb-2 md:flex-wrap md:overflow-visible"
+            >
               {projectCategories.map((item) => (
                 <button
                   key={item}
+                  type="button"
                   onClick={() => setCategory(item)}
-                  className={`px-4 py-2 text-[11px] font-mono uppercase tracking-widest transition-all rounded-full border ${
+                  aria-pressed={category === item}
+                  className={`min-h-10 shrink-0 rounded-full border px-3 py-2 text-[10px] uppercase tracking-wider transition-all sm:px-4 sm:text-[11px] sm:tracking-widest ${
                     category === item
-                      ? "bg-[#c51f32] border-[#c51f32] text-white shadow-md"
-                      : "bg-white border-stone-300 text-stone-700 hover:border-[#c51f32]"
+                      ? "border-[#c51f32] bg-[#c51f32] text-white shadow-md"
+                      : "border-stone-300 bg-white text-stone-700 hover:border-[#c51f32]"
                   }`}
                 >
                   {item}
@@ -331,151 +400,229 @@ export default function Projects() {
             </ScrollReveal>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 sm:gap-16">
-            {filtered.map((p, i) => (
-              <ScrollReveal key={p.id} delay={i * 120} direction="up">
-                <ProjectCard project={p} index={i} />
+          <div className="grid min-w-0 grid-cols-1 gap-8 sm:gap-12 lg:grid-cols-2 lg:gap-16">
+            {filtered.map((project, index) => (
+              <ScrollReveal
+                key={project.id}
+                delay={(index % 3) * 100}
+                direction="up"
+                className="min-w-0"
+              >
+                <ProjectCard project={project} index={index} />
               </ScrollReveal>
             ))}
           </div>
 
+          {filtered.length === 0 && (
+            <p className="py-12 text-center text-sm text-stone-500">
+              No projects found in this category.
+            </p>
+          )}
         </div>
       </section>
 
-      {/* ================= RAW TO MOVE-IN READY (RED BG OUTER + WHITE CARD BG) ================= */}
-      <section className="bg-[#c51f32] text-white py-28 relative overflow-hidden shadow-2xl">
-        <div className="mx-auto w-[min(1320px,calc(100%-38px))] space-y-16 relative z-10">
-          
-          <ScrollReveal direction="left" delay={100} className="text-center max-w-2xl mx-auto space-y-3">
-            <span className="text-[10px] font-bold tracking-[.3em] text-white/90 uppercase font-mono">COMPLETE SPECIFICATION HUB</span>
-            <h2 className="text-4xl sm:text-6xl font-serif font-light text-white">Raw To Move-In Ready</h2>
-            <p className="text-xs sm:text-sm text-white/80 font-light">A flat becomes move-in ready when you have these custom structural & interior add-ons.</p>
+      {/* ADD-ON CARDS */}
+      <section className="relative overflow-hidden bg-[#c51f32] py-16 text-white shadow-2xl sm:py-20 lg:py-28">
+        <div className="relative z-10 mx-auto w-[calc(100%-32px)] max-w-[1320px] space-y-10 sm:w-[calc(100%-48px)] sm:space-y-16">
+          <ScrollReveal
+            direction="left"
+            delay={100}
+            className="mx-auto max-w-2xl space-y-3 text-center"
+          >
+            <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-white/90 sm:text-[10px] sm:tracking-[0.3em]">
+              COMPLETE SPECIFICATION HUB
+            </span>
+            <h2 className="font-serif text-3xl font-light text-white sm:text-5xl lg:text-6xl">
+              Raw To Move-In Ready
+            </h2>
+            <p className="text-xs font-light leading-6 text-white/80 sm:text-sm">
+              A flat becomes move-in ready when you have these custom structural
+              and interior add-ons.
+            </p>
           </ScrollReveal>
 
-          {/* SLIDER WITHOUT SCROLLBAR (WHITE CARDS) */}
-          <div className="overflow-x-auto pb-6 pt-4 no-scrollbar flex gap-6 scroll-smooth">
-            {addonsList.map((addon, cardIdx) => (
-              <div
-                key={cardIdx}
-                className="min-w-[320px] sm:min-w-[360px] p-8 rounded-3xl bg-white text-[#22221f] border border-white/20 flex-shrink-0 shadow-2xl"
+          <div className="project-scroll no-scrollbar flex snap-x snap-mandatory gap-4 overflow-x-auto pb-5 pt-2 sm:gap-6 sm:pb-6 sm:pt-4">
+            {addonsList.map((addon, cardIndex) => (
+              <article
+                key={cardIndex}
+                className="w-[min(86vw,320px)] min-w-[min(86vw,320px)] shrink-0 snap-start rounded-2xl border border-white/20 bg-white p-5 text-[#22221f] shadow-2xl sm:w-[360px] sm:min-w-[360px] sm:rounded-3xl sm:p-8"
               >
-                <div className="flex items-center justify-between border-b border-stone-200 pb-4">
-                  <h3 className="font-serif text-xl text-[#22221f] font-semibold">{addon.category}</h3>
-                  <span className="text-[9px] font-mono text-white bg-[#c51f32] px-2.5 py-0.5 rounded tracking-widest font-bold">ADD-ON</span>
+                <div className="flex items-start justify-between gap-3 border-b border-stone-200 pb-4">
+                  <h3 className="min-w-0 font-serif text-lg font-semibold sm:text-xl">
+                    {addon.category}
+                  </h3>
+                  <span className="shrink-0 rounded bg-[#c51f32] px-2 py-1 text-[8px] font-bold tracking-wider text-white sm:px-2.5 sm:text-[9px]">
+                    ADD-ON
+                  </span>
                 </div>
 
-                {/* ITEM LEVEL BLUR EFFECT IN WHITE CARD THEME */}
-                <div className="space-y-3 my-6">
-                  {addon.items.map((item, itemIdx) => {
-                    const isCardActive = activeItemIndex.cardIndex === cardIdx;
-                    const isItemActive = isCardActive && activeItemIndex.itemIndex === itemIdx;
-                    const isAnyActiveInCard = isCardActive && activeItemIndex.itemIndex !== null;
+                <div className="my-5 space-y-3 sm:my-6">
+                  {addon.items.map((item, itemIndex) => {
+                    const isCardActive =
+                      activeItemIndex.cardIndex === cardIndex;
+                    const isItemActive =
+                      isCardActive &&
+                      activeItemIndex.itemIndex === itemIndex;
+                    const isAnyActiveInCard =
+                      isCardActive &&
+                      activeItemIndex.itemIndex !== null;
 
                     return (
-                      <div
-                        key={itemIdx}
-                        onMouseEnter={() => setActiveItemIndex({ cardIndex: cardIdx, itemIndex: itemIdx })}
-                        onMouseLeave={() => setActiveItemIndex({ cardIndex: null, itemIndex: null })}
-                        className={`p-3.5 rounded-xl text-xs transition-all duration-300 flex items-center gap-2 cursor-pointer border ${
+                      <button
+                        key={itemIndex}
+                        type="button"
+                        onMouseEnter={() =>
+                          setActiveItemIndex({
+                            cardIndex,
+                            itemIndex,
+                          })
+                        }
+                        onMouseLeave={() =>
+                          setActiveItemIndex({
+                            cardIndex: null,
+                            itemIndex: null,
+                          })
+                        }
+                        onFocus={() =>
+                          setActiveItemIndex({
+                            cardIndex,
+                            itemIndex,
+                          })
+                        }
+                        onBlur={() =>
+                          setActiveItemIndex({
+                            cardIndex: null,
+                            itemIndex: null,
+                          })
+                        }
+                        className={`flex w-full items-center gap-2 rounded-xl border p-3 text-left text-xs transition-all duration-300 sm:p-3.5 ${
                           isItemActive
-                            ? "bg-[#c51f32] text-white border-[#c51f32] shadow-lg scale-[1.02] z-10 font-medium"
+                            ? "z-10 scale-[1.01] border-[#c51f32] bg-[#c51f32] font-medium text-white shadow-lg"
                             : isAnyActiveInCard
-                            ? "bg-stone-100 text-stone-400 border-transparent filter blur-[1.5px] opacity-40"
-                            : "bg-stone-100 text-stone-700 border-stone-200 hover:border-[#c51f32]/40"
+                              ? "border-transparent bg-stone-100 text-stone-500 opacity-60"
+                              : "border-stone-200 bg-stone-100 text-stone-700 hover:border-[#c51f32]/40"
                         }`}
                       >
-                        <span className={`w-1.5 h-1.5 rounded-full ${isItemActive ? "bg-white" : "bg-[#c51f32]"}`} />
-                        <span>{item}</span>
-                      </div>
+                        <span
+                          className={`h-1.5 w-1.5 shrink-0 rounded-full ${
+                            isItemActive ? "bg-white" : "bg-[#c51f32]"
+                          }`}
+                        />
+                        <span className="min-w-0 break-words">{item}</span>
+                      </button>
                     );
                   })}
                 </div>
 
-                <div className="pt-4 border-t border-stone-200">
-                  <span className="text-[9px] font-mono text-stone-500 uppercase block">Powered by:</span>
-                  <span className="text-[11px] font-mono font-bold text-[#c51f32] tracking-wider mt-1 block">{addon.poweredBy}</span>
+                <div className="border-t border-stone-200 pt-4">
+                  <span className="block text-[9px] uppercase text-stone-500">
+                    Powered by:
+                  </span>
+                  <span className="mt-1 block break-words text-[10px] font-bold leading-5 tracking-wide text-[#c51f32] sm:text-[11px]">
+                    {addon.poweredBy}
+                  </span>
                 </div>
-              </div>
+              </article>
             ))}
           </div>
-
         </div>
       </section>
 
-      {/* ================= ABSOLUTELY GUARANTEED SECTION ================= */}
-      <section className="py-24 bg-[#fbfaf7] border-t border-black/10 relative overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none opacity-20 bg-[linear-gradient(to_right,#22221f_1px,transparent_1px),linear-gradient(to_bottom,#22221f_1px,transparent_1px)] bg-[size:48px_48px]" />
+      {/* GUARANTEES */}
+      <section className="relative overflow-hidden border-t border-black/10 bg-[#fbfaf7] py-16 sm:py-20 lg:py-24">
+        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,#22221f_1px,transparent_1px),linear-gradient(to_bottom,#22221f_1px,transparent_1px)] bg-[size:32px_32px] opacity-10 sm:bg-[size:48px_48px] sm:opacity-20" />
 
-        <div className="mx-auto w-[min(1280px,calc(100%-38px))] relative z-10">
-          <div className="grid lg:grid-cols-12 gap-12 lg:gap-8 items-center">
-            
-            <div className="lg:col-span-5 text-left space-y-8">
+        <div className="relative z-10 mx-auto w-[calc(100%-32px)] max-w-[1280px] sm:w-[calc(100%-48px)]">
+          <div className="grid min-w-0 items-start gap-8 lg:grid-cols-12 lg:items-center lg:gap-8">
+            <div className="min-w-0 space-y-6 sm:space-y-8 lg:col-span-5">
               <div>
-                <h2 className="text-4xl sm:text-6xl font-serif font-light text-[#22221f] leading-tight">
-                  Absolutely <br />
-                  <span className="font-semibold text-[#22221f]">Guaranteed</span>
+                <h2 className="font-serif text-4xl font-light leading-tight text-[#22221f] sm:text-5xl lg:text-6xl">
+                  Absolutely
+                  <br />
+                  <span className="font-semibold">Guaranteed</span>
                 </h2>
-                <p className="mt-4 text-xs sm:text-sm text-stone-600 leading-relaxed max-w-md">
-                  Everything you need — handled with precision, transparency, and complete peace of mind.
+                <p className="mt-4 max-w-md text-xs leading-6 text-stone-600 sm:text-sm sm:leading-relaxed">
+                  Everything you need — handled with precision, transparency,
+                  and complete peace of mind.
                 </p>
               </div>
 
               <div className="space-y-3">
-                {guaranteeTabs.map((tab, idx) => (
+                {guaranteeTabs.map((tab, index) => (
                   <button
                     key={tab.id}
-                    onClick={() => setActiveTab(idx)}
-                    className={`w-full text-left px-5 py-3.5 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 flex items-center justify-between border ${
-                      activeTab === idx
-                        ? "bg-[#c51f32] text-white border-[#c51f32] shadow-lg shadow-[#c51f32]/20 translate-x-1"
-                        : "bg-stone-200/60 text-stone-700 border-transparent hover:bg-stone-300/50"
+                    type="button"
+                    onClick={() => setActiveTab(index)}
+                    aria-pressed={activeTab === index}
+                    className={`flex min-h-12 w-full items-center justify-between gap-3 rounded-2xl border px-4 py-3 text-left text-xs font-medium transition-all duration-300 sm:rounded-full sm:px-5 sm:py-3.5 sm:text-sm ${
+                      activeTab === index
+                        ? "border-[#c51f32] bg-[#c51f32] text-white shadow-lg shadow-[#c51f32]/20 sm:translate-x-1"
+                        : "border-transparent bg-stone-200/60 text-stone-700 hover:bg-stone-300/50"
                     }`}
                   >
-                    <span>{tab.title}</span>
-                    <ArrowRight size={16} className={`transition-transform duration-300 ${activeTab === idx ? "translate-x-1" : "opacity-40"}`} />
+                    <span className="min-w-0">{tab.title}</span>
+                    <ArrowRight
+                      size={16}
+                      className={`shrink-0 transition-transform duration-300 ${
+                        activeTab === index ? "translate-x-1" : "opacity-40"
+                      }`}
+                    />
                   </button>
                 ))}
               </div>
             </div>
 
-            <div className="lg:col-span-7 bg-white rounded-3xl p-8 sm:p-12 border border-black/10 shadow-2xl relative min-h-[460px] flex flex-col items-center justify-center">
-              <div className="text-center mb-8 max-w-md">
-                <h3 className="text-lg sm:text-xl font-serif text-[#22221f] font-medium">
+            <div className="relative flex min-h-0 min-w-0 flex-col items-center justify-center overflow-hidden rounded-2xl border border-black/10 bg-white p-4 shadow-xl sm:min-h-[420px] sm:rounded-3xl sm:p-8 md:p-12 lg:col-span-7 lg:min-h-[460px]">
+              <div className="mb-6 max-w-md text-center sm:mb-8">
+                <h3 className="font-serif text-base font-medium leading-relaxed text-[#22221f] sm:text-xl">
                   {guaranteeTabs[activeTab].subTitle}
                 </h3>
               </div>
 
-              <div className="w-full relative transition-all duration-700 ease-in-out">
-                <div className="flex justify-center mb-6">
-                  <div className="bg-[#c51f32] text-white px-5 py-2 rounded-xl text-xs font-bold tracking-wider uppercase shadow-md flex items-center gap-2">
-                    <CheckCircle2 size={16} />
-                    {guaranteeTabs[activeTab].badge}
+              <div className="w-full min-w-0">
+                <div className="mb-6 flex justify-center">
+                  <div className="flex max-w-full items-center justify-center gap-2 rounded-xl bg-[#c51f32] px-3 py-2 text-center text-[9px] font-bold uppercase tracking-wider text-white shadow-md sm:px-5 sm:text-xs">
+                    <CheckCircle2 size={16} className="shrink-0" />
+                    <span>{guaranteeTabs[activeTab].badge}</span>
                   </div>
                 </div>
 
                 {activeTab === 0 && (
-                  <div className="space-y-8 animate-fadeIn">
+                  <div className="space-y-6 sm:space-y-8">
                     <div className="flex justify-center">
-                      <div className="w-28 h-28 rounded-full bg-[#fbfaf7] border-2 border-black/10 shadow-xl flex flex-col items-center justify-center text-center p-2">
-                        <div className="text-[#c51f32] font-serif font-bold text-sm">DESIG9 HAUSE</div>
-                        <div className="text-[9px] font-mono text-stone-500 uppercase tracking-widest mt-0.5">ASSIST</div>
+                      <div className="flex h-24 w-24 flex-col items-center justify-center rounded-full border-2 border-black/10 bg-[#fbfaf7] p-2 text-center shadow-xl sm:h-28 sm:w-28">
+                        <div className="font-serif text-xs font-bold text-[#c51f32] sm:text-sm">
+                          DESIG9 HAUSE
+                        </div>
+                        <div className="mt-0.5 text-[8px] uppercase tracking-widest text-stone-500 sm:text-[9px]">
+                          ASSIST
+                        </div>
                       </div>
                     </div>
-                    <div className="border-t-2 border-dashed border-stone-300 w-full relative">
-                      <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-[#c51f32]" />
+
+                    <div className="relative w-full border-t-2 border-dashed border-stone-300">
+                      <div className="absolute left-1/2 top-0 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#c51f32]" />
                     </div>
-                    <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 text-center">
+
+                    <div className="grid grid-cols-2 gap-2 text-center sm:grid-cols-3 sm:gap-3 lg:grid-cols-5">
                       {[
                         { title: "Architects", sub: "Design that inspires", icon: Compass },
                         { title: "Engineers", sub: "Structural excellence", icon: Ruler },
                         { title: "Contractors", sub: "Quality execution", icon: HardHat },
                         { title: "Material Suppliers", sub: "Curated & genuine", icon: Truck },
                         { title: "Site Supervisors", sub: "On-ground assurance", icon: FileCheck },
-                      ].map((item, i) => (
-                        <div key={i} className="bg-[#fbfaf7] p-3 rounded-xl border border-black/5 flex flex-col items-center justify-center">
-                          <item.icon className="w-5 h-5 text-[#c51f32] mb-1.5" />
-                          <div className="text-xs font-semibold text-[#22221f]">{item.title}</div>
-                          <div className="text-[9px] text-stone-500 mt-0.5 leading-tight">{item.sub}</div>
+                      ].map((item, index) => (
+                        <div
+                          key={index}
+                          className="flex min-w-0 flex-col items-center justify-center rounded-xl border border-black/5 bg-[#fbfaf7] p-3"
+                        >
+                          <item.icon className="mb-1.5 h-5 w-5 text-[#c51f32]" />
+                          <div className="text-xs font-semibold text-[#22221f]">
+                            {item.title}
+                          </div>
+                          <div className="mt-0.5 text-[9px] leading-tight text-stone-500">
+                            {item.sub}
+                          </div>
                         </div>
                       ))}
                     </div>
@@ -483,128 +630,174 @@ export default function Projects() {
                 )}
 
                 {activeTab === 1 && (
-                  <div className="space-y-8 animate-fadeIn">
+                  <div className="space-y-6 sm:space-y-8">
                     <div className="flex justify-center">
-                      <div className="w-28 h-28 rounded-full bg-[#22221f] text-white border-2 border-[#c51f32] shadow-xl flex flex-col items-center justify-center text-center p-2">
-                        <div className="text-[#c51f32] font-mono font-bold text-xs">DESIG9</div>
-                        <div className="text-[9px] text-stone-300">PRICE LOCK</div>
+                      <div className="flex h-24 w-24 flex-col items-center justify-center rounded-full border-2 border-[#c51f32] bg-[#22221f] p-2 text-center text-white shadow-xl sm:h-28 sm:w-28">
+                        <div className="font-mono text-xs font-bold text-[#c51f32]">
+                          DESIG9
+                        </div>
+                        <div className="text-[9px] text-stone-300">
+                          PRICE LOCK
+                        </div>
                       </div>
                     </div>
-                    <div className="grid grid-cols-3 gap-3 text-center">
-                      <div className="p-3 bg-stone-100 rounded-xl border border-black/5 opacity-60">
+
+                    <div className="grid grid-cols-1 gap-3 text-center min-[420px]:grid-cols-3">
+                      <div className="rounded-xl border border-black/5 bg-stone-100 p-3 sm:opacity-60">
                         <div className="text-xs text-stone-500">Contractor A</div>
-                        <div className="text-xs font-mono font-bold text-stone-700 mt-1">₹3,32,000</div>
+                        <div className="mt-1 text-xs font-bold text-stone-700 sm:text-sm">
+                          ₹3,32,000
+                        </div>
                       </div>
-                      <div className="p-3 bg-[#c51f32]/10 rounded-xl border border-[#c51f32]/40 shadow-md">
-                        <div className="text-xs font-semibold text-[#c51f32]">Desig9 Matched</div>
-                        <div className="text-sm font-mono font-bold text-[#c51f32] mt-1">₹3,20,000</div>
+                      <div className="rounded-xl border border-[#c51f32]/40 bg-[#c51f32]/10 p-3 shadow-md">
+                        <div className="text-xs font-semibold text-[#c51f32]">
+                          Desig9 Matched
+                        </div>
+                        <div className="mt-1 font-mono text-sm font-bold text-[#c51f32]">
+                          ₹3,20,000
+                        </div>
                       </div>
-                      <div className="p-3 bg-stone-100 rounded-xl border border-black/5 opacity-60">
+                      <div className="rounded-xl border border-black/5 bg-stone-100 p-3 sm:opacity-60">
                         <div className="text-xs text-stone-500">Contractor C</div>
-                        <div className="text-xs font-mono font-bold text-stone-700 mt-1">₹3,28,000</div>
+                        <div className="mt-1 text-xs font-bold text-stone-700 sm:text-sm">
+                          ₹3,28,000
+                        </div>
                       </div>
                     </div>
                   </div>
                 )}
 
                 {activeTab === 2 && (
-                  <div className="space-y-8 animate-fadeIn">
+                  <div className="space-y-6 sm:space-y-8">
                     <div className="flex justify-center">
-                      <div className="w-24 h-24 rounded-full bg-[#fbfaf7] border-2 border-[#c51f32] shadow-xl flex flex-col items-center justify-center text-center">
-                        <span className="text-xs font-serif font-bold text-[#22221f]">AUTHENTIC</span>
+                      <div className="flex h-24 w-24 items-center justify-center rounded-full border-2 border-[#c51f32] bg-[#fbfaf7] text-center shadow-xl sm:h-28 sm:w-28">
+                        <span className="font-serif text-xs font-bold text-[#22221f]">
+                          AUTHENTIC
+                        </span>
                       </div>
                     </div>
-                    <div className="flex flex-wrap items-center justify-center gap-3">
-                      {["HAVELLS", "JAQUAR", "SAMSUNG", "ASIAN PAINTS", "LG"].map((brand, bIdx) => (
-                        <div key={bIdx} className="bg-[#fbfaf7] px-4 py-2 rounded-xl border border-black/10 font-mono text-xs font-bold text-stone-700 shadow-sm">
-                          {brand}
-                        </div>
-                      ))}
+
+                    <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
+                      {["HAVELLS", "JAQUAR", "SAMSUNG", "ASIAN PAINTS", "LG"].map(
+                        (brand) => (
+                          <div
+                            key={brand}
+                            className="rounded-xl border border-black/10 bg-[#fbfaf7] px-3 py-2 text-[10px] font-bold text-stone-700 shadow-sm sm:px-4 sm:text-xs"
+                          >
+                            {brand}
+                          </div>
+                        )
+                      )}
                     </div>
                   </div>
                 )}
 
                 {activeTab === 3 && (
-                  <div className="space-y-8 animate-fadeIn">
+                  <div className="space-y-6 sm:space-y-8">
                     <div className="flex justify-center">
-                      <div className="w-24 h-24 rounded-full bg-[#22221f] text-white border-2 border-[#c51f32] shadow-xl flex flex-col items-center justify-center text-center">
-                        <ShieldCheck className="w-8 h-8 text-[#c51f32]" />
+                      <div className="flex h-24 w-24 items-center justify-center rounded-full border-2 border-[#c51f32] bg-[#22221f] text-white shadow-xl sm:h-28 sm:w-28">
+                        <ShieldCheck className="h-8 w-8 text-[#c51f32]" />
                       </div>
                     </div>
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                      {["CAD Verification", "Load Test", "Finish Check", "Final Handover"].map((check, cIdx) => (
-                        <div key={cIdx} className="p-3 bg-[#fbfaf7] rounded-xl border border-black/10 text-center">
-                          <CheckCircle2 className="w-4 h-4 text-[#c51f32] mx-auto mb-1" />
-                          <div className="text-[11px] font-semibold text-stone-800">{check}</div>
+
+                    <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-3">
+                      {[
+                        "CAD Verification",
+                        "Load Test",
+                        "Finish Check",
+                        "Final Handover",
+                      ].map((check) => (
+                        <div
+                          key={check}
+                          className="rounded-xl border border-black/10 bg-[#fbfaf7] p-3 text-center"
+                        >
+                          <CheckCircle2 className="mx-auto mb-1 h-4 w-4 text-[#c51f32]" />
+                          <div className="text-[10px] font-semibold text-stone-800 sm:text-[11px]">
+                            {check}
+                          </div>
                         </div>
                       ))}
                     </div>
                   </div>
                 )}
-
               </div>
             </div>
-
           </div>
         </div>
       </section>
 
-      {/* ================= 25 REAL REVIEWS CONTINUOUS SCROLLING SLIDER ================= */}
-      <section className="py-24 bg-white border-t border-stone-200 overflow-hidden">
-        <div className="mx-auto w-[min(1320px,calc(100%-38px))] mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
-          <div>
-            <span className="text-[10px] font-bold tracking-[.3em] text-[#c51f32] uppercase font-mono">CLIENT TESTIMONIALS</span>
-            <h2 className="text-4xl sm:text-5xl font-serif text-[#22221f] mt-2">Verified Studio Reviews</h2>
+      {/* CLIENT REVIEWS */}
+      <section className="overflow-hidden border-t border-stone-200 bg-white py-14 sm:py-20 lg:py-24">
+        <div className="mx-auto mb-9 flex w-[calc(100%-32px)] max-w-[1320px] flex-col gap-5 sm:mb-12 sm:w-[calc(100%-48px)] md:flex-row md:items-end md:justify-between">
+          <div className="min-w-0">
+            <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-[#c51f32] sm:text-[10px] sm:tracking-[0.3em]">
+              CLIENT TESTIMONIALS
+            </span>
+            <h2 className="mt-2 break-words font-serif text-3xl text-[#22221f] sm:text-5xl">
+              Verified Studio Reviews
+            </h2>
           </div>
-          <div className="flex items-center gap-2 bg-stone-100 px-4 py-2 rounded-full border border-stone-200">
-            <div className="flex text-amber-500">
-              {[...Array(5)].map((_, i) => (
-                <Star key={i} size={14} fill="currentColor" />
+
+          <div className="flex max-w-full flex-wrap items-center gap-2 self-start rounded-full border border-stone-200 bg-stone-100 px-3 py-2 sm:px-4 md:self-auto">
+            <div className="flex shrink-0 text-amber-500">
+              {[...Array(5)].map((_, index) => (
+                <Star key={index} size={14} fill="currentColor" />
               ))}
             </div>
-            <span className="text-xs font-mono font-bold text-[#22221f]">4.9 / 5.0 Rating (25 Reviews)</span>
+            <span className="text-[10px] font-bold text-[#22221f] sm:text-xs">
+              4.9 / 5.0 Rating (25 Reviews)
+            </span>
           </div>
         </div>
 
-        <div className="relative overflow-hidden w-full no-scrollbar">
-          <div className="animate-scroll-continuous gap-6 flex">
-            {[...reviewsList, ...reviewsList].map((rev, idx) => (
-              <div
-                key={idx}
-                className="w-[340px] sm:w-[380px] p-8 rounded-3xl bg-[#fbfaf7] border border-stone-200 shadow-sm flex flex-col justify-between flex-shrink-0 hover:border-[#c51f32] hover:shadow-xl transition-all duration-300"
+        <div className="no-scrollbar relative w-full overflow-hidden">
+          <div className="animate-scroll-continuous gap-4 sm:gap-6">
+            {[...reviewsList, ...reviewsList].map((review, index) => (
+              <article
+                key={`${review.name}-${index}`}
+                className="flex w-[min(84vw,320px)] shrink-0 flex-col justify-between rounded-2xl border border-stone-200 bg-[#fbfaf7] p-5 shadow-sm transition-all duration-300 hover:border-[#c51f32] hover:shadow-xl sm:w-[380px] sm:rounded-3xl sm:p-8"
               >
                 <div className="space-y-4">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-full bg-[#c51f32] text-white flex items-center justify-center font-bold text-sm shadow-md">
-                      {rev.name.split(" ").map((n) => n[0]).join("")}
+                  <div className="flex min-w-0 items-center gap-3 sm:gap-4">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#c51f32] text-sm font-bold text-white shadow-md sm:h-12 sm:w-12">
+                      {review.name
+                        .split(" ")
+                        .map((namePart) => namePart[0])
+                        .join("")}
                     </div>
-                    <div>
-                      <h3 className="font-serif text-lg text-[#22221f] font-semibold">{rev.name}</h3>
-                      <p className="text-[10px] font-mono text-stone-500">{rev.role}</p>
+                    <div className="min-w-0">
+                      <h3 className="break-words font-serif text-base font-semibold text-[#22221f] sm:text-lg">
+                        {review.name}
+                      </h3>
+                      <p className="break-words text-[9px] leading-4 text-stone-500 sm:text-[10px]">
+                        {review.role}
+                      </p>
                     </div>
                   </div>
 
-                  <div className="flex text-amber-500 gap-1">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} size={14} fill="currentColor" />
+                  <div
+                    className="flex gap-1 text-amber-500"
+                    aria-label={`${review.rating} out of 5 stars`}
+                  >
+                    {[...Array(5)].map((_, index) => (
+                      <Star key={index} size={14} fill="currentColor" />
                     ))}
                   </div>
 
-                  <p className="text-xs text-stone-600 font-light leading-relaxed italic">
-                    "{rev.text}"
+                  <p className="text-xs font-light leading-relaxed text-stone-600">
+                    "{review.text}"
                   </p>
                 </div>
 
-                <div className="pt-4 border-t border-stone-200 mt-6 flex justify-between items-center text-[10px] font-mono text-stone-400">
+                <div className="mt-6 flex items-center justify-between gap-2 border-t border-stone-200 pt-4 text-[8px] text-stone-400 sm:text-[10px]">
                   <span>VERIFIED CLIENT</span>
-                  <span>5.0 RATING</span>
+                  <span>{review.rating.toFixed(1)} RATING</span>
                 </div>
-              </div>
+              </article>
             ))}
           </div>
         </div>
       </section>
-
-    </div>
+    </main>
   );
 }

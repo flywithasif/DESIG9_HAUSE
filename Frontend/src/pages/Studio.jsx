@@ -1,42 +1,82 @@
-﻿import React, { useEffect, useState, useRef } from "react";
+﻿
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import Lenis from "lenis";
-import { ArrowUpRight, Sparkles, Compass, ShieldCheck, Ruler, Layers, Award, Building, CheckCircle2, Shield, Eye } from "lucide-react";
+import {
+  ArrowUpRight,
+  Compass,
+  ShieldCheck,
+  Ruler,
+  Layers,
+} from "lucide-react";
 
-// Premium 2.5 Seconds (2500ms) Scroll Reveal Wrapper Component
-function ScrollReveal({ children, className = "", delay = 0, direction = "up" }) {
+// Premium scroll reveal animation
+function ScrollReveal({
+  children,
+  className = "",
+  delay = 0,
+  direction = "up",
+}) {
   const [isVisible, setIsVisible] = useState(false);
   const domRef = useRef(null);
 
   useEffect(() => {
+    const element = domRef.current;
+
+    if (!element) return;
+
+    // Respect users who prefer reduced motion
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+
+    if (prefersReducedMotion) {
+      setIsVisible(true);
+      return;
+    }
+
+    if (!("IntersectionObserver" in window)) {
+      setIsVisible(true);
+      return;
+    }
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
           setIsVisible(true);
+          observer.unobserve(entry.target);
         }
       },
-      { threshold: 0.1 }
+      {
+        threshold: 0.05,
+        rootMargin: "0px 0px 40px 0px",
+      }
     );
 
-    if (domRef.current) observer.observe(domRef.current);
+    observer.observe(element);
+
     return () => observer.disconnect();
   }, []);
 
-  let transformHidden = "translate-y-20 scale-95";
-  if (direction === "left") transformHidden = "-translate-x-16 scale-95";
-  if (direction === "right") transformHidden = "translate-x-16 scale-95";
+  const hiddenTransform = {
+    up: "translate-y-10 sm:translate-y-20",
+    left: "-translate-x-8 sm:-translate-x-16",
+    right: "translate-x-8 sm:translate-x-16",
+  };
 
   return (
     <div
       ref={domRef}
       style={{
-        transitionDuration: "2500ms", // Exactly 2.5 Seconds Motion Duration
+        transitionDuration: "2500ms",
         transitionDelay: `${delay}ms`,
       }}
-      className={`transition-all ease-out transform ${
+      className={`min-w-0 transition-[opacity,transform] ease-out ${
         isVisible
-          ? "opacity-100 translate-x-0 translate-y-0 scale-100"
-          : `opacity-0 ${transformHidden} pointer-events-none`
+          ? "translate-x-0 translate-y-0 scale-100 opacity-100"
+          : `scale-[0.97] opacity-0 ${
+              hiddenTransform[direction] || hiddenTransform.up
+            }`
       } ${className}`}
     >
       {children}
@@ -44,368 +84,563 @@ function ScrollReveal({ children, className = "", delay = 0, direction = "up" })
   );
 }
 
+const stats = [
+  { label: "Practice Experience", value: "14+ Years" },
+  { label: "Completed Projects", value: "1,800+" },
+  { label: "Active Cities", value: "15+ Cities" },
+  { label: "Design Standards", value: "100% Custom" },
+];
+
+const pillars = [
+  {
+    n: "01",
+    title: "Listen first",
+    description: "Understand people, needs and context.",
+  },
+  {
+    n: "02",
+    title: "Design clearly",
+    description:
+      "Let thoughtful planning and honest materials guide decisions.",
+  },
+  {
+    n: "03",
+    title: "Care about details",
+    description:
+      "Small decisions add up to coherent, considered spaces.",
+  },
+];
+
+const materialCards = [
+  {
+    title: "Honest Material Palettes",
+    description:
+      "Using unmasked concrete, warm timbers, natural stones, and structural glazing that age gracefully over decades.",
+    icon: Layers,
+  },
+  {
+    title: "Climate Responsive Planning",
+    description:
+      "Optimizing cross-ventilation, thermal massing, and natural daylighting tailored to North Indian weather conditions.",
+    icon: Compass,
+  },
+  {
+    title: "Rigorous Quality Audits",
+    description:
+      "Multi-stage site checkups during foundation casting, brickwork, waterproofing, and final interior finishing.",
+    icon: ShieldCheck,
+  },
+];
+
+const processSteps = [
+  {
+    phase: "01",
+    title: "Topographical Scoping",
+    description:
+      "Comprehensive on-site microclimate, soil stability, sun path, and municipal zoning analysis.",
+  },
+  {
+    phase: "02",
+    title: "Volumetric Massing & CAD",
+    description:
+      "Sculpting spatial flow, room adjacencies, and structural grids with high-precision 3D CAD modeling.",
+  },
+  {
+    phase: "03",
+    title: "Materiality & Luminaire Curation",
+    description:
+      "Hand-picking tactile natural stones, bespoke metalwork, acoustic panels, and lighting fixtures.",
+  },
+  {
+    phase: "04",
+    title: "Turnkey Site Execution",
+    description:
+      "Direct principal supervision on ground in Lucknow to ensure flawless translation from paper to reality.",
+  },
+];
+
+const container =
+  "mx-auto w-[calc(100%-32px)] max-w-[1320px] sm:w-[calc(100%-48px)] lg:w-[calc(100%-64px)]";
+
+const primaryButton =
+  "inline-flex min-h-12 w-full items-center justify-center gap-3 bg-[#c51f32] px-5 py-4 text-center text-[11px] font-semibold uppercase tracking-[0.16em] text-white transition-colors duration-300 hover:bg-[#a61828] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#c51f32] sm:w-auto sm:px-7 sm:text-xs sm:tracking-[0.2em] lg:px-8";
+
+const secondaryButton =
+  "inline-flex min-h-12 w-full items-center justify-center gap-3 border border-white/30 bg-transparent px-5 py-4 text-center text-[11px] font-semibold uppercase tracking-[0.16em] text-white transition-colors duration-300 hover:bg-white hover:text-[#22221f] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white sm:w-auto sm:px-7 sm:text-xs sm:tracking-[0.2em] lg:px-8";
+
+function SectionLabel({ children }) {
+  return (
+    <span className="block text-[10px] font-bold uppercase tracking-[0.22em] text-[#c51f32] [overflow-wrap:anywhere] sm:text-[11px] sm:tracking-[0.3em]">
+      {children}
+    </span>
+  );
+}
+
+function StudioImage({
+  src,
+  alt,
+  className = "",
+  caption,
+  primary = false,
+}) {
+  return (
+    <div
+      className={`group absolute overflow-hidden rounded-xl border border-white/10 bg-stone-900 shadow-2xl transition-transform duration-700 hover:scale-[1.025] ${
+        primary ? "z-10" : "z-20 border-4 border-[#1c1c19]"
+      } ${className}`}
+    >
+      <img
+        src={src}
+        alt={alt}
+        loading="lazy"
+        decoding="async"
+        className="h-full w-full object-cover brightness-90 transition-[transform,filter] duration-1000 group-hover:scale-105 group-hover:brightness-100"
+      />
+
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-transparent opacity-70 transition-opacity duration-500 group-hover:opacity-40" />
+
+      <div
+        className={`absolute bottom-3 left-3 max-w-[calc(100%-24px)] rounded px-2 py-1 text-[9px] font-mono uppercase tracking-[0.12em] text-white sm:bottom-4 sm:left-4 sm:px-3 sm:text-[10px] sm:tracking-widest ${
+          primary ? "bg-black/60 backdrop-blur-md" : "bg-[#c51f32]"
+        }`}
+      >
+        {caption}
+      </div>
+    </div>
+  );
+}
+
 export default function Studio() {
-  // Initialize Lenis Smooth Scroll & Page Reset
+  // Lenis smooth scroll with proper animation-frame cleanup
   useEffect(() => {
-    window.scrollTo(0, 0);
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
 
     const lenis = new Lenis({
-      duration: 1.5,
+      duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       smoothWheel: true,
-      touchMultiplier: 2,
+      syncTouch: false,
     });
 
-    function raf(time) {
-      lenis.raf(time);
-      requestAnimationFrame(raf);
-    }
+    let animationFrameId;
 
-    requestAnimationFrame(raf);
+    const raf = (time) => {
+      lenis.raf(time);
+      animationFrameId = requestAnimationFrame(raf);
+    };
+
+    animationFrameId = requestAnimationFrame(raf);
 
     return () => {
+      cancelAnimationFrame(animationFrameId);
       lenis.destroy();
     };
   }, []);
 
   return (
-    <div className="bg-[#fbfaf7] text-[#22221f] min-h-screen selection:bg-[#c51f32] selection:text-white font-sans overflow-x-hidden">
-      
-      {/* ================= HERO SECTION WITH OVERLAPPING HOVER-ZOOM IMAGES ================= */}
-      <section className="relative bg-[#1c1c19] text-[#fbfaf7] pt-36 pb-32 md:pt-48 md:pb-44 border-b border-[#c51f32]/30 overflow-hidden">
-        {/* Ambient Luxury Glows */}
-        <div className="absolute top-1/4 right-10 w-[600px] h-[600px] bg-[#c51f32]/10 rounded-full blur-[160px] pointer-events-none" />
-        <div className="absolute bottom-10 left-10 w-[400px] h-[400px] bg-white/5 rounded-full blur-[120px] pointer-events-none" />
+    <main className="min-h-screen overflow-x-clip bg-[#fbfaf7] font-sans text-[#22221f] selection:bg-[#c51f32] selection:text-white">
+      {/* ================= HERO SECTION ================= */}
+      <section className="relative overflow-hidden border-b border-[#c51f32]/30 bg-[#1c1c19] pb-16 pt-28 text-[#fbfaf7] sm:pb-20 sm:pt-36 md:pb-28 md:pt-40 lg:pb-40 lg:pt-48">
+        <div className="pointer-events-none absolute right-[-100px] top-1/4 h-[280px] w-[280px] rounded-full bg-[#c51f32]/10 blur-[100px] sm:right-[-50px] sm:h-[450px] sm:w-[450px] sm:blur-[140px] lg:right-10 lg:h-[600px] lg:w-[600px] lg:blur-[160px]" />
 
-        <div className="mx-auto w-[min(1320px,calc(100%-38px))] relative z-10 grid lg:grid-cols-12 gap-16 items-center">
-          
-          {/* LEFT HERO TEXT */}
-          <ScrollReveal direction="left" delay={100} className="lg:col-span-6 space-y-8">
+        <div className="pointer-events-none absolute bottom-0 left-[-80px] h-[240px] w-[240px] rounded-full bg-white/5 blur-[90px] sm:left-10 sm:h-[350px] sm:w-[350px] sm:blur-[120px]" />
+
+        <div
+          className={`${container} relative z-10 grid min-w-0 items-center gap-10 sm:gap-12 lg:grid-cols-12 lg:gap-12 xl:gap-16`}
+        >
+          {/* Hero text */}
+          <ScrollReveal
+            direction="left"
+            delay={100}
+            className="min-w-0 space-y-6 sm:space-y-8 lg:col-span-6"
+          >
             <div className="flex items-center gap-3">
-              <span className="h-[1px] w-12 bg-[#c51f32]"></span>
-              <span className="text-[11px] font-bold tracking-[.35em] uppercase text-[#c51f32] font-mono">
+              <span className="h-px w-8 shrink-0 bg-[#c51f32] sm:w-12" />
+
+              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#c51f32] sm:text-[11px] sm:tracking-[0.3em] md:tracking-[0.35em]">
                 DESIG9 HAUSE STUDIO
               </span>
             </div>
 
-            <h1 className="text-5xl sm:text-7xl lg:text-8xl font-serif font-light tracking-tight leading-[1.04]">
-              Design with <br />
-              <em className="font-serif italic text-[#c51f32] font-normal">intention.</em>
+            <h1 className="font-serif text-[clamp(2.6rem,9vw,4rem)] font-light leading-[1.04] tracking-tight sm:text-7xl lg:text-7xl xl:text-8xl">
+              Design with
+              <br />
+              <em className="font-serif font-normal italic text-[#c51f32]">
+                intention.
+              </em>
             </h1>
 
-            <p className="text-base md:text-lg text-stone-300 font-light leading-relaxed max-w-xl">
-              We believe the best spaces feel considered, work beautifully and belong to their surroundings[cite: 1]. Every line we draw is rooted in contextual clarity and uncompromising materiality.
+            <p className="max-w-xl text-sm font-light leading-7 text-stone-300 sm:text-base sm:leading-relaxed md:text-lg">
+              We believe the best spaces feel considered, work beautifully
+              and belong to their surroundings. Every line we draw is rooted
+              in contextual clarity and uncompromising materiality.
             </p>
 
-            {/* TWO DISTINCT BUTTONS WITH DIFFERENT LINKS */}
-            <div className="pt-4 flex flex-wrap items-center gap-4">
-              <Link 
-                to="/contact" 
-                className="inline-flex items-center gap-3 bg-[#c51f32] text-white px-8 py-4 text-xs font-semibold uppercase tracking-[.25em] transition-all hover:bg-[#a61828]"
-              >
+            <div className="flex flex-col items-stretch gap-3 pt-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4 sm:pt-4">
+              <Link to="/contact" className={primaryButton}>
                 <span>Private Commission</span>
-                <ArrowUpRight size={16} />
+                <ArrowUpRight size={16} className="shrink-0" />
               </Link>
 
-              <Link 
-                to="/free-site-visit" 
-                className="inline-flex items-center gap-3 bg-transparent border border-white/30 text-white px-8 py-4 text-xs font-semibold uppercase tracking-[.25em] transition-all hover:bg-white hover:text-[#22221f]"
-              >
+              <Link to="/free-site-visit" className={secondaryButton}>
                 <span>Book Free Site Visit</span>
-                <Compass size={16} />
+                <Compass size={16} className="shrink-0" />
               </Link>
             </div>
           </ScrollReveal>
 
-          {/* RIGHT HERO OVERLAPPING LUXURY IMAGES WITH HOVER ZOOM */}
-          <ScrollReveal direction="right" delay={300} className="lg:col-span-6 relative h-[480px] sm:h-[560px] w-full">
-            
-            {/* Image 1: Primary Back/Left Overlapping Image */}
-            <div className="absolute top-0 left-0 w-[65%] h-[75%] rounded-2xl overflow-hidden shadow-2xl border border-white/10 transition-all duration-700 hover:scale-105 hover:z-30 group cursor-pointer bg-stone-900">
-              <img 
-                src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=1200" 
-                alt="Luxury Villa Architecture" 
-                className="w-full h-full object-cover filter brightness-90 group-hover:scale-110 group-hover:brightness-100 transition-all duration-1000"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 group-hover:opacity-20 transition-opacity"></div>
-              <div className="absolute bottom-4 left-4 text-white text-[10px] font-mono tracking-widest uppercase bg-black/60 backdrop-blur-md px-3 py-1 rounded">
-                RESIDENTIAL FACADE
-              </div>
-            </div>
+          {/* Overlapping hero images */}
+          <ScrollReveal
+            direction="right"
+            delay={300}
+            className="relative mx-auto h-[340px] w-full min-w-0 max-w-[560px] sm:h-[460px] md:h-[520px] lg:col-span-6 lg:h-[470px] xl:h-[560px]"
+          >
+            <StudioImage
+              primary
+              src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=1200"
+              alt="Luxury villa architecture"
+              caption="Residential Facade"
+              className="left-0 top-0 h-[72%] w-[68%] sm:h-[75%] sm:w-[65%]"
+            />
 
-            {/* Image 2: Secondary Front/Right Overlapping Image with Hover Zoom */}
-            <div className="absolute bottom-0 right-0 w-[60%] h-[70%] rounded-2xl overflow-hidden shadow-[-20px_20px_60px_rgba(0,0,0,0.8)] border-4 border-[#1c1c19] transition-all duration-700 hover:scale-105 hover:z-40 group cursor-pointer bg-stone-900 z-20">
-              <img 
-                src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&q=80&w=1200" 
-                alt="Minimalist Living Lounge" 
-                className="w-full h-full object-cover filter brightness-90 group-hover:scale-110 group-hover:brightness-100 transition-all duration-1000"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 group-hover:opacity-20 transition-opacity"></div>
-              <div className="absolute bottom-4 left-4 text-white text-[10px] font-mono tracking-widest uppercase bg-[#c51f32] px-3 py-1 rounded">
-                TACTILE INTERIORS
-              </div>
-            </div>
-
+            <StudioImage
+              src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&q=80&w=1200"
+              alt="Minimalist luxury living lounge"
+              caption="Tactile Interiors"
+              className="bottom-0 right-0 h-[66%] w-[66%] sm:h-[70%] sm:w-[60%]"
+            />
           </ScrollReveal>
-
         </div>
       </section>
 
-      {/* ================= STUDIO STATS COUNTER BAR ================= */}
-      <section className="py-12 bg-white border-b border-stone-200">
-        <div className="mx-auto w-[min(1320px,calc(100%-38px))] grid grid-cols-2 md:grid-cols-4 gap-8 divide-y md:divide-y-0 md:divide-x divide-stone-200">
-          {[
-            { label: "Practice Experience", value: "14+ Years" },
-            { label: "Completed Projects", value: "1,800+" },
-            { label: "Active Cities", value: "15+ Cities" },
-            { label: "Design Standards", value: "100% Custom" }
-          ].map((stat, idx) => (
-            <ScrollReveal key={idx} delay={idx * 100} direction="up" className="text-center pt-4 md:pt-0">
-              <div className="text-3xl md:text-4xl font-serif text-[#c51f32]">{stat.value}</div>
-              <div className="text-xs uppercase tracking-widest text-stone-500 mt-1 font-mono">{stat.label}</div>
+      {/* ================= STUDIO STATISTICS ================= */}
+      <section className="border-b border-stone-200 bg-white py-8 sm:py-12">
+        <div
+          className={`${container} grid grid-cols-2 gap-x-3 gap-y-0 divide-y divide-stone-200 sm:gap-x-6 md:grid-cols-4 md:divide-x md:divide-y-0`}
+        >
+          {stats.map((stat, index) => (
+            <ScrollReveal
+              key={stat.label}
+              delay={index * 100}
+              className="flex min-w-0 flex-col items-center justify-center px-1 py-5 text-center sm:px-3 md:py-0 md:first:pl-0 md:last:pr-0"
+            >
+              <div className="font-serif text-2xl text-[#c51f32] sm:text-3xl md:text-4xl">
+                {stat.value}
+              </div>
+
+              <div className="mt-2 text-[9px] font-mono uppercase leading-relaxed tracking-[0.1em] text-stone-500 sm:text-[10px] sm:tracking-widest md:text-xs">
+                {stat.label}
+              </div>
             </ScrollReveal>
           ))}
         </div>
       </section>
 
-      {/* ================= DESIGN PHILOSOPHY EDITORIAL SECTION ================= */}
-      <section className="py-28 md:py-40 relative">
-        <div className="mx-auto w-[min(1320px,calc(100%-38px))] grid lg:grid-cols-12 gap-16 items-center">
-          
-          <ScrollReveal direction="left" delay={150} className="lg:col-span-5 aspect-[4/5] overflow-hidden rounded-2xl shadow-2xl relative group bg-stone-200">
-            <img 
-              className="size-full object-cover filter brightness-95 group-hover:scale-105 transition-transform duration-1000" 
-              src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80&w=1200" 
-              alt="Design Philosophy Practice" 
+      {/* ================= DESIGN PHILOSOPHY ================= */}
+      <section className="relative py-16 sm:py-24 md:py-32 lg:py-40">
+        <div
+          className={`${container} grid min-w-0 items-center gap-10 sm:gap-12 lg:grid-cols-12 lg:gap-14 xl:gap-16`}
+        >
+          <ScrollReveal
+            direction="left"
+            delay={150}
+            className="group relative aspect-[4/5] min-w-0 overflow-hidden rounded-xl bg-stone-200 shadow-2xl sm:rounded-2xl lg:col-span-5"
+          >
+            <img
+              className="h-full w-full object-cover brightness-95 transition-transform duration-1000 group-hover:scale-105"
+              src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80&w=1200"
+              alt="Architecture and design philosophy"
+              loading="lazy"
+              decoding="async"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
-            <div className="absolute bottom-6 left-6 text-white space-y-1">
-              <span className="text-[10px] font-mono uppercase tracking-widest text-[#c51f32] bg-white px-2 py-0.5 rounded font-bold">LUCKNOW PRACTICE</span>
-              <p className="text-sm font-serif">Spatial Purity & Contextual Harmony</p>
+
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+
+            <div className="absolute bottom-4 left-4 right-4 space-y-2 text-white sm:bottom-6 sm:left-6 sm:right-6">
+              <span className="inline-block rounded bg-white px-2 py-1 text-[9px] font-mono font-bold uppercase tracking-wider text-[#c51f32] sm:text-[10px] sm:tracking-widest">
+                LUCKNOW PRACTICE
+              </span>
+
+              <p className="font-serif text-base sm:text-lg">
+                Spatial Purity &amp; Contextual Harmony
+              </p>
             </div>
           </ScrollReveal>
 
-          <ScrollReveal direction="right" delay={300} className="lg:col-span-7 space-y-8">
-            <span className="text-[10px] font-bold tracking-[.3em] text-[#c51f32] uppercase font-mono">DESIGN PHILOSOPHY</span>
-            
-            <h2 className="text-4xl sm:text-6xl font-serif font-light leading-[1.1] text-[#22221f]">
-              Less noise. <br />
-              More <em className="font-serif italic text-[#c51f32] font-normal">meaning.</em>
+          <ScrollReveal
+            direction="right"
+            delay={300}
+            className="min-w-0 space-y-6 sm:space-y-8 lg:col-span-7"
+          >
+            <SectionLabel>DESIGN PHILOSOPHY</SectionLabel>
+
+            <h2 className="font-serif text-4xl font-light leading-[1.1] text-[#22221f] sm:text-5xl md:text-6xl">
+              Less noise.
+              <br />
+              More{" "}
+              <em className="font-normal italic text-[#c51f32]">
+                meaning.
+              </em>
             </h2>
 
-            <div className="space-y-4 text-base md:text-lg text-stone-600 font-light leading-relaxed">
+            <div className="space-y-4 text-sm font-light leading-7 text-stone-600 sm:text-base sm:leading-relaxed md:text-lg">
               <p>
-                DESIG9 HAUSE is a design studio focused on architecture, interiors and landscape concepts. Every project deserves a fresh perspective rather than a ready-made answer[cite: 1].
+                DESIG9 HAUSE is a design studio focused on architecture,
+                interiors and landscape concepts. Every project deserves a
+                fresh perspective rather than a ready-made answer.
               </p>
+
               <p>
-                We listen carefully, explore possibilities and bring clarity to complex decisions. The goal is to shape places that make sense for the people who use them[cite: 1].
+                We listen carefully, explore possibilities and bring clarity
+                to complex decisions. The goal is to shape places that make
+                sense for the people who use them.
               </p>
             </div>
 
-            {/* 3 Core Pillars Minimalist Row */}
-            <div className="grid sm:grid-cols-3 gap-6 pt-6 border-t border-stone-300">
-              {[
-                { n: "01", t: "Listen first", p: "Understand people, needs and context[cite: 1]." },
-                { n: "02", t: "Design clearly", p: "Let thoughtful planning and honest materials guide decisions[cite: 1]." },
-                { n: "03", t: "Care about details", p: "Small decisions add up to coherent, considered spaces[cite: 1]." }
-              ].map(v => (
-                <div key={v.n} className="space-y-2">
-                  <span className="text-xs font-mono text-[#c51f32] font-bold">DIV // {v.n}</span>
-                  <h4 className="font-serif text-xl text-[#22221f]">{v.t}</h4>
-                  <p className="text-xs text-stone-500 font-light leading-relaxed">{v.p}</p>
+            <div className="grid grid-cols-1 gap-6 border-t border-stone-300 pt-6 sm:grid-cols-3 sm:gap-5 sm:pt-7">
+              {pillars.map((pillar) => (
+                <div key={pillar.n} className="min-w-0 space-y-2">
+                  <span className="text-xs font-mono font-bold text-[#c51f32]">
+                    DIV // {pillar.n}
+                  </span>
+
+                  <h3 className="font-serif text-xl text-[#22221f]">
+                    {pillar.title}
+                  </h3>
+
+                  <p className="text-xs font-light leading-relaxed text-stone-500 sm:text-[13px]">
+                    {pillar.description}
+                  </p>
                 </div>
               ))}
             </div>
-
           </ScrollReveal>
-
         </div>
       </section>
 
-      {/* ================= MATERIAL AUTHENTICITY & SUSTAINABILITY (FIXED BLANK RIGHT SIDE) ================= */}
-      <section className="bg-[#eeeee7] py-24 md:py-32 border-t border-b border-stone-300">
-        <div className="mx-auto w-[min(1320px,calc(100%-38px))] space-y-16">
-          
-          {/* HEADER ROW WITH VISUAL CARD ON THE RIGHT TO FILL BLANK SPACE */}
-          <div className="grid lg:grid-cols-12 gap-12 items-center">
-            
-            <ScrollReveal direction="left" delay={100} className="lg:col-span-7 space-y-4">
-              <span className="text-[10px] font-bold tracking-[.3em] text-[#c51f32] uppercase font-mono">MATERIAL INTEGRITY</span>
-              <h2 className="text-4xl sm:text-6xl font-serif text-[#22221f] leading-tight">Uncompromising Craftsmanship</h2>
-              <p className="text-base text-stone-600 font-light leading-relaxed max-w-xl">
-                We source directly from global and national tier-one partners (such as Kohler, Häfele, and Saint-Gobain) to ensure everlasting structural performance.
+      {/* ================= MATERIAL INTEGRITY ================= */}
+      <section className="border-y border-stone-300 bg-[#eeeee7] py-16 sm:py-20 md:py-28 lg:py-32">
+        <div className={`${container} space-y-10 sm:space-y-14 lg:space-y-16`}>
+          <div className="grid min-w-0 items-center gap-8 lg:grid-cols-12 lg:gap-12">
+            <ScrollReveal
+              direction="left"
+              delay={100}
+              className="min-w-0 space-y-4 lg:col-span-7"
+            >
+              <SectionLabel>MATERIAL INTEGRITY</SectionLabel>
+
+              <h2 className="font-serif text-3xl leading-tight text-[#22221f] sm:text-5xl md:text-6xl">
+                Uncompromising Craftsmanship
+              </h2>
+
+              <p className="max-w-xl text-sm font-light leading-7 text-stone-600 sm:text-base sm:leading-relaxed">
+                We source directly from global and national tier-one partners
+                (such as Kohler, Häfele, and Saint-Gobain) to ensure
+                everlasting structural performance.
               </p>
             </ScrollReveal>
 
-            {/* RIGHT SIDE ADDITION FOR MATERIAL SECTION */}
-            <ScrollReveal direction="right" delay={250} className="lg:col-span-5">
-              <div className="p-6 rounded-2xl bg-white border border-stone-300 shadow-xl space-y-4 relative overflow-hidden">
-                <div className="flex items-center justify-between border-b border-stone-200 pb-3">
-                  <span className="text-xs font-mono font-bold text-[#c51f32]">SPECIFIED SPECIMENS</span>
-                  <span className="text-[10px] font-mono text-stone-400">GLOBAL PARTNERS</span>
+            <ScrollReveal
+              direction="right"
+              delay={250}
+              className="min-w-0 lg:col-span-5"
+            >
+              <div className="relative space-y-4 overflow-hidden rounded-xl border border-stone-300 bg-white p-4 shadow-xl sm:rounded-2xl sm:p-6">
+                <div className="flex flex-wrap items-center justify-between gap-2 border-b border-stone-200 pb-3">
+                  <span className="text-[10px] font-mono font-bold text-[#c51f32] sm:text-xs">
+                    SPECIFIED SPECIMENS
+                  </span>
+
+                  <span className="text-[9px] font-mono text-stone-400 sm:text-[10px]">
+                    GLOBAL PARTNERS
+                  </span>
                 </div>
-                
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="p-3 bg-[#fbfaf7] rounded-xl border border-stone-200">
-                    <span className="text-[10px] font-mono text-stone-400 uppercase block">Glazing</span>
-                    <strong className="text-xs text-[#22221f] font-serif">Saint-Gobain Acoustic</strong>
-                  </div>
-                  <div className="p-3 bg-[#fbfaf7] rounded-xl border border-stone-200">
-                    <span className="text-[10px] font-mono text-stone-400 uppercase block">Fittings</span>
-                    <strong className="text-xs text-[#22221f] font-serif">Häfele Soft-Close</strong>
-                  </div>
-                  <div className="p-3 bg-[#fbfaf7] rounded-xl border border-stone-200">
-                    <span className="text-[10px] font-mono text-stone-400 uppercase block">Sanitary</span>
-                    <strong className="text-xs text-[#22221f] font-serif">Kohler Signature</strong>
-                  </div>
-                  <div className="p-3 bg-[#fbfaf7] rounded-xl border border-stone-200">
-                    <span className="text-[10px] font-mono text-stone-400 uppercase block">Surface</span>
-                    <strong className="text-xs text-[#22221f] font-serif">Italian Travertine</strong>
-                  </div>
+
+                <div className="grid grid-cols-1 gap-3 min-[360px]:grid-cols-2">
+                  {[
+                    { label: "Glazing", value: "Saint-Gobain Acoustic" },
+                    { label: "Fittings", value: "Häfele Soft-Close" },
+                    { label: "Sanitary", value: "Kohler Signature" },
+                    { label: "Surface", value: "Italian Travertine" },
+                  ].map((item) => (
+                    <div
+                      key={item.label}
+                      className="min-w-0 rounded-lg border border-stone-200 bg-[#fbfaf7] p-3 sm:rounded-xl sm:p-4"
+                    >
+                      <span className="mb-1 block text-[10px] font-mono uppercase text-stone-400">
+                        {item.label}
+                      </span>
+
+                      <strong className="block break-words font-serif text-xs font-normal leading-relaxed text-[#22221f] sm:text-sm">
+                        {item.value}
+                      </strong>
+                    </div>
+                  ))}
                 </div>
               </div>
             </ScrollReveal>
-
           </div>
 
-          {/* 3 CARDS ROW */}
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                title: "Honest Material Palettes",
-                desc: "Using unmasked concrete, warm timbers, natural stones, and structural glazing that age gracefully over decades.",
-                icon: Layers
-              },
-              {
-                title: "Climate Responsive Planning",
-                desc: "Optimizing cross-ventilation, thermal massing, and natural daylighting tailored to North Indian weather conditions.",
-                icon: Compass
-              },
-              {
-                title: "Rigorous Quality Audits",
-                desc: "Multi-stage site checkups during foundation casting, brickwork, waterproofing, and final interior finishing.",
-                icon: ShieldCheck
-              }
-            ].map((item, i) => (
-              <ScrollReveal key={i} delay={i * 150} direction="up" className="p-8 bg-white border border-stone-300 rounded-2xl shadow-sm hover:border-[#c51f32] transition-colors">
-                <div className="p-3 rounded-xl bg-[#c51f32]/10 text-[#c51f32] w-fit mb-6">
-                  <item.icon size={24} />
-                </div>
-                <h3 className="font-serif text-2xl text-[#22221f]">{item.title}</h3>
-                <p className="text-xs md:text-sm text-stone-600 font-light mt-3 leading-relaxed">{item.desc}</p>
-              </ScrollReveal>
-            ))}
-          </div>
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 lg:gap-8">
+            {materialCards.map((item, index) => {
+              const Icon = item.icon;
 
+              return (
+                <ScrollReveal
+                  key={item.title}
+                  delay={index * 150}
+                  className="h-full min-w-0"
+                >
+                  <article className="h-full rounded-xl border border-stone-300 bg-white p-5 shadow-sm transition-colors duration-300 hover:border-[#c51f32] sm:rounded-2xl sm:p-7 lg:p-8">
+                    <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-[#c51f32]/10 text-[#c51f32] sm:mb-6">
+                      <Icon size={24} />
+                    </div>
+
+                    <h3 className="font-serif text-xl leading-snug text-[#22221f] sm:text-2xl">
+                      {item.title}
+                    </h3>
+
+                    <p className="mt-3 text-sm font-light leading-6 text-stone-600 sm:text-[13px] sm:leading-relaxed md:text-sm">
+                      {item.description}
+                    </p>
+                  </article>
+                </ScrollReveal>
+              );
+            })}
+          </div>
         </div>
       </section>
 
-      {/* ================= UNIQUE STUDIO ARCHITECTURE PROCESS (FIXED BLANK RIGHT SIDE) ================= */}
-      <section className="bg-[#1c1c19] text-[#fbfaf7] py-32 relative overflow-hidden border-b border-[#c51f32]/40">
-        <div className="mx-auto w-[min(1320px,calc(100%-38px))] relative z-10 space-y-16">
-          
-          {/* HEADER ROW WITH CAD SPECIFICATION BADGE ON THE RIGHT TO FILL BLANK SPACE */}
-          <div className="grid lg:grid-cols-12 gap-12 items-center">
-            
-            <ScrollReveal direction="left" delay={100} className="lg:col-span-7 space-y-4">
-              <span className="text-[10px] font-bold tracking-[.3em] text-[#c51f32] uppercase font-mono">
-                METHODOLOGY - RIGOROUS BLUEPRINT LIFECYCLE
-              </span>
-              <h2 className="text-4xl sm:text-6xl font-serif font-light leading-tight">
+      {/* ================= ARCHITECTURE PROCESS ================= */}
+      <section className="relative overflow-hidden border-b border-[#c51f32]/40 bg-[#1c1c19] py-16 text-[#fbfaf7] sm:py-24 md:py-28 lg:py-32">
+        <div className={`${container} relative z-10 space-y-10 sm:space-y-14 lg:space-y-16`}>
+          <div className="grid min-w-0 items-center gap-8 lg:grid-cols-12 lg:gap-12">
+            <ScrollReveal
+              direction="left"
+              delay={100}
+              className="min-w-0 space-y-4 lg:col-span-7"
+            >
+              <SectionLabel>
+                METHODOLOGY — RIGOROUS BLUEPRINT LIFECYCLE
+              </SectionLabel>
+
+              <h2 className="font-serif text-3xl font-light leading-tight sm:text-5xl md:text-6xl">
                 Studio Architecture Process
               </h2>
-              <p className="text-stone-400 font-light text-base leading-relaxed max-w-xl">
-                To achieve absolute luxury, intuition must be backed by engineering precision. Our 4-stage proprietary workflow eliminates guesswork.
+
+              <p className="max-w-xl text-sm font-light leading-7 text-stone-400 sm:text-base sm:leading-relaxed">
+                To achieve absolute luxury, intuition must be backed by
+                engineering precision. Our 4-stage proprietary workflow
+                eliminates guesswork.
               </p>
             </ScrollReveal>
 
-            {/* RIGHT SIDE ADDITION FOR PROCESS SECTION */}
-            <ScrollReveal direction="right" delay={250} className="lg:col-span-5">
-              <div className="p-6 rounded-2xl bg-stone-900 border border-stone-800 shadow-2xl space-y-4">
-                <div className="flex items-center justify-between border-b border-stone-800 pb-3">
-                  <div className="flex items-center gap-2 text-xs font-mono text-white">
-                    <Ruler className="text-[#c51f32]" size={16} />
+            <ScrollReveal
+              direction="right"
+              delay={250}
+              className="min-w-0 lg:col-span-5"
+            >
+              <div className="space-y-4 rounded-xl border border-stone-800 bg-stone-900 p-4 shadow-2xl sm:rounded-2xl sm:p-6">
+                <div className="flex flex-wrap items-center justify-between gap-3 border-b border-stone-800 pb-3">
+                  <div className="flex min-w-0 items-center gap-2 text-xs font-mono text-white">
+                    <Ruler className="shrink-0 text-[#c51f32]" size={16} />
                     <span>LUCKNOW STUDIO CAD</span>
                   </div>
-                  <span className="text-[10px] font-mono px-2.5 py-1 bg-[#c51f32] text-white rounded-full">SCALE 1:50</span>
+
+                  <span className="shrink-0 rounded-full bg-[#c51f32] px-2.5 py-1 text-[10px] font-mono text-white">
+                    SCALE 1:50
+                  </span>
                 </div>
-                
-                <div className="text-xs text-stone-400 space-y-2 font-mono">
-                  <div className="flex justify-between"><span>STRUCTURAL VERIFICATION:</span> <span className="text-white">STAGE-4 APPROVED</span></div>
-                  <div className="flex justify-between"><span>ZONING COMPLIANCE:</span> <span className="text-white">100% CLEAR</span></div>
-                  <div className="flex justify-between"><span>TIMELINE GUARANTEE:</span> <span className="text-white">ON SCHEDULE</span></div>
+
+                <div className="space-y-3 text-xs font-mono text-stone-400">
+                  {[
+                    ["STRUCTURAL VERIFICATION:", "STAGE-4 APPROVED"],
+                    ["ZONING COMPLIANCE:", "100% CLEAR"],
+                    ["TIMELINE GUARANTEE:", "ON SCHEDULE"],
+                  ].map(([label, value]) => (
+                    <div
+                      key={label}
+                      className="grid min-w-0 grid-cols-1 gap-1 sm:grid-cols-[minmax(0,1fr)_auto] sm:gap-3"
+                    >
+                      <span className="break-words leading-relaxed">
+                        {label}
+                      </span>
+
+                      <span className="break-words leading-relaxed text-white sm:text-right">
+                        {value}
+                      </span>
+                    </div>
+                  ))}
                 </div>
               </div>
             </ScrollReveal>
-
           </div>
 
-          {/* 4 PROCESS STAGES GRID */}
-          <div className="grid md:grid-cols-4 gap-8">
-            {[
-              {
-                phase: "01",
-                title: "Topographical Scoping",
-                desc: "Comprehensive on-site microclimate, soil stability, sun path, and municipal zoning analysis."
-              },
-              {
-                phase: "02",
-                title: "Volumetric Massing & CAD",
-                desc: "Sculpting spatial flow, room adjacencies, and structural grids with high-precision 3D CAD modeling."
-              },
-              {
-                phase: "03",
-                title: "Materiality & Luminaire Curation",
-                desc: "Hand-picking tactile natural stones, bespoke metalwork, acoustic panels, and lighting fixtures."
-              },
-              {
-                phase: "04",
-                title: "Turnkey Site Execution",
-                desc: "Direct principal supervision on ground in Lucknow to ensure flawless translation from paper to reality."
-              }
-            ].map((step, idx) => (
-              <ScrollReveal key={step.phase} delay={idx * 150} direction="up" className="p-8 rounded-2xl bg-stone-900/80 border border-stone-800 hover:border-[#c51f32] transition-colors group">
-                <span className="text-xs font-mono text-[#c51f32] font-bold tracking-widest">STAGE // {step.phase}</span>
-                <h3 className="font-serif text-2xl text-white mt-4 group-hover:text-[#c51f32] transition-colors">{step.title}</h3>
-                <p className="text-xs text-stone-400 font-light mt-3 leading-relaxed">{step.desc}</p>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-4 lg:gap-6">
+            {processSteps.map((step, index) => (
+              <ScrollReveal
+                key={step.phase}
+                delay={index * 150}
+                className="h-full min-w-0"
+              >
+                <article className="group h-full rounded-xl border border-stone-800 bg-stone-900/80 p-5 transition-colors duration-300 hover:border-[#c51f32] sm:rounded-2xl sm:p-6 lg:p-7">
+                  <span className="text-xs font-mono font-bold tracking-widest text-[#c51f32]">
+                    STAGE // {step.phase}
+                  </span>
+
+                  <h3 className="mt-4 font-serif text-xl leading-snug text-white transition-colors group-hover:text-[#c51f32] sm:text-2xl">
+                    {step.title}
+                  </h3>
+
+                  <p className="mt-3 text-sm font-light leading-6 text-stone-400 sm:text-xs sm:leading-relaxed lg:text-[13px]">
+                    {step.description}
+                  </p>
+                </article>
               </ScrollReveal>
             ))}
           </div>
-
         </div>
       </section>
 
-      {/* ================= CALL TO ACTION SECTION (WITH TWO SEPARATE LINKS) ================= */}
-      <section className="py-28 bg-[#fbfaf7]">
-        <ScrollReveal direction="up" delay={150} className="mx-auto w-[min(1320px,calc(100%-38px))] flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8 border-b border-stone-300 pb-16">
-          <div>
-            <span className="text-[10px] font-bold tracking-[.3em] text-[#c51f32] uppercase font-mono">PRIVATE COMMISSION</span>
-            <h2 className="mt-3 text-4xl sm:text-6xl font-serif text-[#22221f]">
-              Ready to construct your <br />
-              <em className="font-serif italic text-[#c51f32] font-normal">legacy landmark?</em>
+      {/* ================= FINAL CALL TO ACTION ================= */}
+      <section className="bg-[#fbfaf7] py-16 sm:py-20 md:py-24 lg:py-28">
+        <ScrollReveal
+          direction="up"
+          delay={150}
+          className={`${container} flex min-w-0 flex-col items-start justify-between gap-8 border-b border-stone-300 pb-10 sm:pb-14 lg:flex-row lg:items-center lg:gap-10 lg:pb-16`}
+        >
+          <div className="min-w-0">
+            <SectionLabel>PRIVATE COMMISSION</SectionLabel>
+
+            <h2 className="mt-3 font-serif text-3xl leading-[1.15] text-[#22221f] sm:text-5xl md:text-6xl">
+              Ready to construct your
+              <br className="hidden sm:block" />
+              <span className="block sm:inline"> </span>
+              <em className="font-normal italic text-[#c51f32]">
+                legacy landmark?
+              </em>
             </h2>
           </div>
-          
-          <div className="flex flex-wrap items-center gap-4">
-            <Link 
-              to="/contact" 
-              className="inline-flex items-center gap-3 bg-[#22221f] text-[#fbfaf7] px-8 py-4 text-xs font-semibold uppercase tracking-[.2em] transition-all duration-300 hover:bg-[#c51f32]"
+
+          <div className="flex w-full min-w-0 flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4 lg:w-auto lg:shrink-0">
+            <Link
+              to="/contact"
+              className="inline-flex min-h-12 w-full items-center justify-center gap-3 bg-[#22221f] px-5 py-4 text-center text-[11px] font-semibold uppercase tracking-[0.16em] text-[#fbfaf7] transition-colors duration-300 hover:bg-[#c51f32] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#c51f32] sm:w-auto sm:px-7 sm:text-xs sm:tracking-[0.2em] lg:px-8"
             >
               <span>Consult Studio</span>
-              <ArrowUpRight size={16}/>
+              <ArrowUpRight size={16} className="shrink-0" />
             </Link>
 
-            <Link 
-              to="/free-site-visit" 
-              className="inline-flex items-center gap-3 bg-[#c51f32] text-white px-8 py-4 text-xs font-semibold uppercase tracking-[.2em] transition-all duration-300 hover:bg-[#a71929]"
+            <Link
+              to="/free-site-visit"
+              className={primaryButton}
             >
               <span>Book Free Site Visit</span>
-              <Compass size={16}/>
+              <Compass size={16} className="shrink-0" />
             </Link>
           </div>
         </ScrollReveal>
       </section>
-
-    </div>
+    </main>
   );
 }
