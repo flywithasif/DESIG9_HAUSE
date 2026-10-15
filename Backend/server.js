@@ -152,9 +152,24 @@ app.post("/enquiries", async (req, res) => {
 app.post("/site-visits", async (req, res) => {
   try {
     const newVisit = await SiteVisit.create(req.body);
-    res.status(201).json({ success: true, data: newVisit });
+
+    return res.status(201).json({
+      success: true,
+      data: newVisit,
+    });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error("SITE_VISIT_SUBMISSION_ERROR:", {
+      name: err.name,
+      message: err.message,
+      errors: err.errors
+        ? Object.keys(err.errors)
+        : undefined,
+    });
+
+    return res.status(500).json({
+      success: false,
+      message: "Unable to submit site visit request.",
+    });
   }
 });
 
