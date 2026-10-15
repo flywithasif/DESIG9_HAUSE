@@ -140,14 +140,7 @@ export default function Home() {
         <div className="mx-auto w-[min(1320px,calc(100%-38px))] relative z-10 grid lg:grid-cols-12 gap-12 items-center">
           
           <ScrollReveal direction="left" delay={100} className="lg:col-span-6 space-y-8">
-            <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 w-fit px-4 py-1.5 rounded-full text-xs font-mono">
-              <div className="flex text-amber-400">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} size={12} fill="currentColor" />
-                ))}
-              </div>
-              <span className="text-stone-300">Trusted by 1,500+ Clients[cite: 33] · 98% Satisfaction</span>
-            </div>
+            
 
             <h1 className="text-5xl sm:text-7xl lg:text-8xl font-serif font-light tracking-tight leading-[1.02]">
               Designing Spaces & <br />
@@ -428,21 +421,93 @@ export default function Home() {
         </div>
       </section>
 
+      
+      {/* DARK SECTION WITH UNIQUE ARCHITECTURAL AERO-DIAGRAM BACKGROUND */}
+      <section className="bg-[#1c1c19] text-[#fbfaf7] py-28 relative overflow-hidden border-t border-b border-[#c51f32]/40">
+        
+        {/* Unique Architecture Aero-Diagram Background Grid */}
+        <div 
+          className="absolute inset-0 opacity-[0.09] pointer-events-none"
+          style={{
+            backgroundImage: `
+              radial-gradient(circle at 50% 50%, #c51f32 0%, transparent 60%),
+              linear-gradient(0deg, transparent 24px, rgba(255,255,255,0.12) 25px, rgba(255,255,255,0.12) 26px, transparent 27px),
+              linear-gradient(90deg, transparent 24px, rgba(255,255,255,0.12) 25px, rgba(255,255,255,0.12) 26px, transparent 27px)
+            `,
+            backgroundSize: '100% 100%, 100px 100px, 100px 100px'
+          }}
+        ></div>
+
+        <div className="absolute right-[-10%] top-[-20%] w-[600px] h-[600px] rounded-full border border-[#c51f32]/20 pointer-events-none flex items-center justify-center">
+          <div className="w-[450px] h-[450px] rounded-full border border-dashed border-stone-600/40"></div>
+        </div>
+
+        <div className="mx-auto w-[min(1320px,calc(100%-38px))] relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          
+          <ScrollReveal direction="left" delay={150} className="lg:col-span-7">
+            <span className="text-[10px] font-bold tracking-[.3em] text-[#c51f32] uppercase font-mono">
+              AERO-STRUCTURAL PRACTICE & TIMELINE GUARANTEE
+            </span>
+            <h3 className="text-4xl sm:text-5xl font-serif font-light mt-4 leading-tight">
+              Bridging poetic spatial concepts with <span className="italic text-[#c51f32]">rigorous site execution.</span>
+            </h3>
+            <p className="mt-6 text-stone-400 font-light text-base leading-relaxed max-w-2xl">
+              Led by Founder & Architect Sagar Vij and Interior Designer Navya Agarwal, Desig9 Hause ensures that every architectural blueprint undergoes multi-stage structural validation before execution.
+            </p>
+
+            <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 gap-6 pt-8 border-t border-stone-800">
+              <div className="flex gap-4 items-start">
+                <div className="p-2 bg-[#c51f32]/10 border border-[#c51f32]/30 text-[#c51f32]">
+                  <ShieldCheck size={20} />
+                </div>
+                <div>
+                  <h4 className="font-serif text-lg text-white">Transparent Execution</h4>
+                  <p className="text-xs text-stone-400 font-light mt-1">Full breakdown of structural budgets and material specifications.</p>
+                </div>
+              </div>
+
+              <div className="flex gap-4 items-start">
+                <div className="p-2 bg-[#c51f32]/10 border border-[#c51f32]/30 text-[#c51f32]">
+                  <Layers size={20} />
+                </div>
+                <div>
+                  <h4 className="font-serif text-lg text-white">Photorealistic Curation</h4>
+                  <p className="text-xs text-stone-400 font-light mt-1">Complete clarity on light, texture, and materials prior to construction.</p>
+                </div>
+              </div>
+            </div>
+          </ScrollReveal>
+
+          <ScrollReveal direction="right" delay={350} className="lg:col-span-5 bg-[#22221f]/90 backdrop-blur-xl border border-stone-700 p-8 sm:p-10 relative shadow-2xl">
+            <div className="absolute top-4 right-4 text-[9px] font-mono text-stone-500 tracking-widest">
+              [AERO-SPEC: DL-2026]
+            </div>
+            <Sparkles className="text-[#c51f32] mb-6" size={36} />
+            <h4 className="text-2xl font-serif text-white">Initiate a Private Commission</h4>
+            <p className="text-sm text-stone-400 font-light mt-3 leading-relaxed">
+              Book a direct consultation with our principal architects to review site blueprints, spatial requirements, and custom timelines.
+            </p>
+            <Link 
+              to="/contact"
+              className="mt-8 inline-flex items-center justify-between w-full py-4 px-6 bg-[#c51f32] text-white text-xs font-semibold tracking-widest uppercase transition-all duration-300 hover:bg-[#a61828]"
+            >
+              <span>Schedule Architectural Review</span>
+              <ArrowUpRight size={16} />
+            </Link>
+          </ScrollReveal>
+
+        </div>
+      </section>
+
+
       {/* ================= REAL REVIEWS CONTINUOUS SCROLLING SLIDER AT THE BOTTOM ================= */}
       <section className="py-24 bg-white border-t border-stone-200 overflow-hidden">
         <div className="mx-auto w-[min(1320px,calc(100%-38px))] mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div>
             <span className="text-[10px] font-bold tracking-[.3em] text-[#c51f32] uppercase font-mono">CLIENT TESTIMONIALS</span>
-            <h2 className="text-4xl sm:text-5xl font-serif text-[#22221f] mt-2">Verified Studio Reviews</h2>
+            <h2 className="text-4xl sm:text-5xl font-serif text-[#22221f] mt-2">Studio Reviews</h2>
           </div>
-          <div className="flex items-center gap-2 bg-stone-100 px-4 py-2 rounded-full border border-stone-200">
-            <div className="flex text-amber-500">
-              {[...Array(5)].map((_, i) => (
-                <Star key={i} size={14} fill="currentColor" />
-              ))}
-            </div>
-            <span className="text-xs font-mono font-bold text-[#22221f]">4.9 / 5.0 Rating (25 Reviews)</span>
-          </div>
+          
         </div>
 
         <div className="relative overflow-hidden w-full no-scrollbar">
