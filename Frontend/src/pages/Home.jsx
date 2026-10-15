@@ -240,11 +240,11 @@ export default function Home() {
             <div className="grid grid-cols-2 gap-6 pt-4 border-t border-stone-200">
               <div>
                 <h4 className="font-serif text-xl text-[#22221f]">Sagar Vij</h4>
-                <p className="text-xs font-mono text-[#c51f32]">Founder | Architect[cite: 41]</p>
+                <p className="text-xs font-mono text-[#c51f32]">Founder | Architect</p>
               </div>
               <div>
                 <h4 className="font-serif text-xl text-[#22221f]">Navya Agarwal</h4>
-                <p className="text-xs font-mono text-[#c51f32]">Interior Designer[cite: 41]</p>
+                <p className="text-xs font-mono text-[#c51f32]">Interior Designer</p>
               </div>
             </div>
           </ScrollReveal>
