@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import {
@@ -14,63 +13,74 @@ import {
   Truck,
   FileCheck,
   Check,
+  ExternalLink,
 } from "lucide-react";
 
 export default function Team() {
   const [activeTab, setActiveTab] = useState(0);
 
+  // Exact 1, 2, 3, 4 Order as requested with local public images
   const teamMembers = [
     {
+      id: "1",
+      number: "01",
       name: "Sagar Vij",
-      role: "Founder & Principal Architect",
-      image:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=800",
-      bio: "Leading Desig9 Hause with 15+ years of mastery in monolithic forms and structural balance.",
+      role: "Founder & Architect",
+      image: "/team/sagar.png",
+      bio: "Leading Desig9 Hause with mastery in monolithic forms, structural balance, and modern luxury architecture.",
       expertise: [
         "Master Planning",
-        "Elevation",
-        "Sustainable Design",
+        "Elevation Design",
+        "Sustainable Architecture",
       ],
-      experience: "15+ Yrs Exp.",
+      experience: "Founder",
+      isExternalLink: false,
     },
     {
+      id: "2",
+      number: "02",
+      name: "Lavanya Mishra",
+      role: "Business & Strategy Consultant",
+      image: "/team/lavanya.png",
+      bio: "Driving strategic expansion, client partnerships, and brand positioning across luxury real estate domains.",
+      expertise: [
+        "Business Strategy",
+        "Brand Expansion",
+        "Client Relations",
+      ],
+      experience: "Strategy Head",
+      isExternalLink: false,
+    },
+    {
+      id: "3",
+      number: "03",
       name: "Navya Agarwal",
-      role: "Lead Interior Designer",
-      image:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=800",
-      bio: "Crafting spatial sanctuaries with tactile materials, bespoke joinery, and warm ambiance.",
+      role: "Interior Designer",
+      image: "/team/navya.png",
+      bio: "Crafting spatial sanctuaries with tactile natural materials, bespoke joinery, and warm lighting ambiance.",
       expertise: [
         "Spatial Styling",
         "Custom Joinery",
         "Lighting Ambiance",
       ],
-      experience: "12+ Yrs Exp.",
+      experience: "Lead Interior",
+      isExternalLink: false,
     },
     {
-      name: "Ar. Kabir Mehta",
-      role: "Senior Structural Head",
-      image:
-        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=800",
-      bio: "Ensuring structural engineering precision and blueprint execution across luxury landmarks.",
+      id: "4",
+      number: "04",
+      name: "Asif",
+      role: "Full Stack Web Developer",
+      image: "/team/asif.png",
+      bio: "Architecting high-performance digital platforms, motion design engines, and ultra-luxury web experiences.",
       expertise: [
-        "Structural CAD",
-        "Blueprinting",
-        "Site Execution",
+        "Full Stack Web Dev",
+        "Interactive UI/UX",
+        "Motion Engine",
       ],
-      experience: "14+ Yrs Exp.",
-    },
-    {
-      name: "Rhea Sen",
-      role: "Landscape Architect",
-      image:
-        "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=800",
-      bio: "Integrating biophilic courtyards, water elements, and exterior landscapes for luxury living.",
-      expertise: [
-        "Biophilic Design",
-        "Hardscape",
-        "Outdoor Lighting",
-      ],
-      experience: "10+ Yrs Exp.",
+      experience: "Developer",
+      link: "https://flywithasif.vercel.app/",
+      isExternalLink: true,
     },
   ];
 
@@ -226,7 +236,7 @@ export default function Team() {
 
             <div className="inline-flex max-w-full items-center gap-2 rounded-full border border-[#c51f32]/20 bg-[#c51f32]/10 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.15em] text-[#c51f32] sm:px-4 sm:text-xs sm:tracking-[0.25em]">
               <Sparkles className="h-4 w-4 shrink-0" />
-              <span>Studio Principal Collective</span>
+              <span>Studio Leadership Council</span>
             </div>
 
             <h1 className="font-serif text-4xl font-light leading-[1.08] tracking-tight text-[#22221f] min-[380px]:text-5xl sm:text-6xl md:text-7xl lg:text-7xl xl:text-[76px]">
@@ -238,9 +248,7 @@ export default function Team() {
             </h1>
 
             <p className="max-w-xl text-sm leading-relaxed text-stone-600 sm:text-base">
-              Desig9 Hause is led by a tight-knit principal team of structural
-              engineers, interior designers, and architects dedicated to
-              crafting iconic built environments.
+              Desig9 Hause is led by a dedicated collective of architects, interior stylists, consultants, and technical visionaries committed to architectural perfection.
             </p>
 
             <div className="flex flex-wrap items-center gap-2.5 pt-1 sm:gap-3">
@@ -258,30 +266,29 @@ export default function Team() {
         </div>
       </section>
 
-      {/* ================= TEAM PROFILES ================= */}
+      {/* ================= TEAM PROFILES (1, 2, 3, 4 EXACT ORDER) ================= */}
       <section className="relative bg-white/60 py-14 sm:py-20 lg:py-24">
         <div className="mx-auto w-[calc(100%-32px)] max-w-[1280px] sm:w-[calc(100%-48px)]">
 
           <div className="mx-auto mb-10 max-w-2xl space-y-3 text-center sm:mb-14 lg:mb-16">
             <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#c51f32] sm:text-xs">
-              Leadership Council
+              THE CORE TEAM
             </span>
 
             <h2 className="font-serif text-3xl text-[#22221f] sm:text-4xl md:text-5xl">
-              Meet The 4 Principals
+              Meet The Key Members
             </h2>
 
             <p className="text-xs leading-relaxed text-stone-600 sm:text-sm">
-              Direct studio leadership overseeing design, engineering, and
-              execution.
+              Direct studio leadership overseeing design, strategy, interior, and digital technology.
             </p>
           </div>
 
-          {/* 1 Column Mobile, 2 Tablet, 4 Desktop */}
+          {/* 4 Cards Grid */}
           <div className="grid grid-cols-1 gap-5 min-[480px]:grid-cols-2 lg:grid-cols-4 lg:gap-5 xl:gap-6">
-            {teamMembers.map((member, index) => (
+            {teamMembers.map((member) => (
               <article
-                key={member.name}
+                key={member.id}
                 className="group flex min-w-0 flex-col justify-between overflow-hidden rounded-2xl border border-black/10 bg-white shadow-lg shadow-black/[0.02] transition-all duration-500 hover:border-[#c51f32]/50 hover:shadow-xl"
               >
                 <div>
@@ -291,10 +298,15 @@ export default function Team() {
                       alt={member.name}
                       loading="lazy"
                       className="h-full w-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=800";
+                      }}
                     />
 
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-90 transition-opacity group-hover:opacity-100" />
 
+                    
                     <div className="absolute bottom-4 left-3 right-3 text-left sm:left-4 sm:right-4">
                       <span className="mb-1 inline-block rounded-full bg-[#c51f32] px-2.5 py-1 text-[9px] font-mono uppercase tracking-widest text-white">
                         {member.experience}
@@ -339,12 +351,23 @@ export default function Team() {
                     Desig9 Hause
                   </span>
 
-                  <Link
-                    to="/contact"
-                    className="inline-flex min-h-9 shrink-0 items-center gap-1.5 rounded-md text-xs font-semibold text-[#c51f32] transition-colors hover:text-[#991524] hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#c51f32]"
-                  >
-                    Consult <ArrowRight size={13} />
-                  </Link>
+                  {member.isExternalLink ? (
+                    <a
+                      href={member.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex min-h-9 shrink-0 items-center gap-1.5 rounded-md px-3 py-1 bg-[#c51f32] text-white text-xs font-semibold shadow-md transition-all hover:bg-[#991524]"
+                    >
+                      <span>Portfolio</span> <ExternalLink size={13} />
+                    </a>
+                  ) : (
+                    <Link
+                      to="/contact"
+                      className="inline-flex min-h-9 shrink-0 items-center gap-1.5 rounded-md text-xs font-semibold text-[#c51f32] transition-colors hover:text-[#991524] hover:underline"
+                    >
+                      Consult <ArrowRight size={13} />
+                    </Link>
+                  )}
                 </div>
               </article>
             ))}
@@ -373,8 +396,7 @@ export default function Team() {
                 </h2>
 
                 <p className="mt-4 max-w-md text-xs leading-relaxed text-stone-600 sm:text-sm">
-                  Everything you need — handled with precision, transparency,
-                  and complete peace of mind.
+                  Everything you need — handled with precision, transparency, and complete peace of mind.
                 </p>
               </div>
 
@@ -494,30 +516,18 @@ export default function Team() {
 
                     <div className="grid grid-cols-1 gap-3 min-[400px]:grid-cols-3">
                       <div className="rounded-xl border border-black/5 bg-stone-100 p-3 text-center">
-                        <div className="text-xs text-stone-500">
-                          Contractor A
-                        </div>
-                        <div className="mt-1 font-mono text-xs font-bold text-stone-700">
-                          ₹3,32,000
-                        </div>
+                        <div className="text-xs text-stone-500">Contractor A</div>
+                        <div className="mt-1 font-mono text-xs font-bold text-stone-700">₹3,32,000</div>
                       </div>
 
                       <div className="rounded-xl border border-[#c51f32]/40 bg-[#c51f32]/10 p-3 text-center shadow-md">
-                        <div className="text-xs font-semibold text-[#c51f32]">
-                          Desig9 Matched
-                        </div>
-                        <div className="mt-1 font-mono text-sm font-bold text-[#c51f32]">
-                          ₹3,20,000
-                        </div>
+                        <div className="text-xs font-semibold text-[#c51f32]">Desig9 Matched</div>
+                        <div className="mt-1 font-mono text-sm font-bold text-[#c51f32]">₹3,20,000</div>
                       </div>
 
                       <div className="rounded-xl border border-black/5 bg-stone-100 p-3 text-center">
-                        <div className="text-xs text-stone-500">
-                          Contractor C
-                        </div>
-                        <div className="mt-1 font-mono text-xs font-bold text-stone-700">
-                          ₹3,28,000
-                        </div>
+                        <div className="text-xs text-stone-500">Contractor C</div>
+                        <div className="mt-1 font-mono text-xs font-bold text-stone-700">₹3,28,000</div>
                       </div>
                     </div>
 
@@ -545,9 +555,9 @@ export default function Team() {
                     <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
                       {[
                         "HAVELLS",
-                        "Jaduar",
+                        "JAQUAR",
                         "SAMSUNG",
-                        "asianpaints",
+                        "ASIAN PAINTS",
                         "LG",
                       ].map((brand) => (
                         <div
@@ -626,50 +636,6 @@ export default function Team() {
         </div>
       </section>
 
-      {/* ================= ANIMATIONS ================= */}
-      <style>{`
-        @keyframes slideFromLeft {
-          0% {
-            opacity: 0;
-            transform: translateX(-30px);
-          }
-          100% {
-            opacity: 1;
-            transform: translateX(0);
-          }
-        }
-
-        @keyframes slideFromRight {
-          0% {
-            opacity: 0;
-            transform: translateX(30px);
-          }
-          100% {
-            opacity: 1;
-            transform: translateX(0);
-          }
-        }
-
-        @keyframes fadeIn {
-          0% {
-            opacity: 0;
-            transform: scale(0.98);
-          }
-          100% {
-            opacity: 1;
-            transform: scale(1);
-          }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-          .animate-\\[slideFromLeft_1\\.5s_cubic-bezier\\(0\\.16\\,1\\,0\\.3\\,1\\)_forwards\\],
-          .animate-\\[slideFromRight_1\\.5s_cubic-bezier\\(0\\.16\\,1\\,0\\.3\\,1\\)_forwards\\] {
-            animation: none;
-            opacity: 1;
-            transform: none;
-          }
-        }
-      `}</style>
     </main>
   );
 }
